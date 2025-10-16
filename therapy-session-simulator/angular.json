@@ -58,7 +58,12 @@
           "options": {
             "port": 5000,
             "host": "0.0.0.0",
-            "allowedHosts": ["all"]
+            "allowedHosts": [
+              "localhost",
+              ".replit.app",
+              ".repl.co",
+              ".replit.dev"
+            ]
           },
           "configurations": {
             "production": {
