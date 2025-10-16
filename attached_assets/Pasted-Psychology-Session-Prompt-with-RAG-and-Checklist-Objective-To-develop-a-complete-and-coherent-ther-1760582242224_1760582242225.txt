@@ -1,0 +1,35 @@
+Psychology Session Prompt with RAG and Checklist
+Objective: To develop a complete and coherent therapy session, incorporating patient details from previous sessions and a checklist to ensure the quality of the response.
+
+General Instructions:
+
+Context (RAG/Memory): "Imagine you are a psychologist about to have session #[Session Number] with your patient, [Patient's Name]. Based on the information we've discussed in previous sessions (e.g., their main concerns, the triggering event, their profession, and treatment goals), create a realistic scenario. Remember the key points from the last session: [Mention 2-3 key points, such as "the discussion about their relationship with their father" or "the agreement to practice a breathing technique"]."
+
+Session Preparation: Before you begin, complete this checklist to ensure the session is effective:
+
+✔ Initial Summary: Start the session with an open-ended question that connects to the previous session. (e.g., "How did this week go with what we talked about?")
+
+✔ Topic Development: The patient should present a new challenge or delve deeper into a previous topic. (e.g., "The patient reveals they had an argument with their partner.")
+
+✔ Empathy and Active Listening: Include at least one response that shows empathy (e.g., "I understand that must be very difficult for you...") and a clarification question (e.g., "Could you give me an example of what happened?").
+
+✔ Therapeutic Intervention: Introduce a technique or a key question that helps the patient reflect on their problem from a new perspective. (e.g., "The therapist introduces the 'empty chair' technique" or "The therapist asks, 'What would you say to your past self who felt that way?'")
+
+✔ Homework Assignment (Optional): If appropriate, at the end of the session, suggest a small "homework" task the patient can practice during the week. (e.g., "Try to write down your thoughts in a journal when you feel anxious.")
+
+✔ Session Closure: End the session by summarizing the most important points and agreeing on a date for the next appointment.
+
+Example Response Using the Prompt:
+
+"You are the psychologist for patient John Smith, in their 3rd session. In the last session, you discussed his difficulty setting boundaries at work.
+
+Response: "Hello, John. It's good to see you. Last week we talked about the challenge of setting boundaries at the office. How did your week go? Were you able to think about that, or did anything new come up?"
+
+(The simulator would then continue, fulfilling the checklist points in its complete response.)"
+
+Additional Suggestion:
+
+To make the simulator even more dynamic, you could implement a scoring or "feedback" system that evaluates whether the user (who is simulating the psychologist) fulfilled the checklist points. This would add a "game" element and help them learn best practices for a therapy session.
+
+In the middle add an animation that simulates a person talking as the patient. 
+Make everythin using angular html y js with angular framework to clone and run the project. 
