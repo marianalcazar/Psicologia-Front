@@ -25,6 +25,7 @@
               }
             ],
             "styles": [
+              "src/custom-theme.scss",
               "src/styles.css"
             ]
           },
@@ -54,6 +55,11 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "port": 5000,
+            "host": "0.0.0.0",
+            "allowedHosts": "all"
+          },
           "configurations": {
             "production": {
               "buildTarget": "therapy-session-simulator:build:production"
