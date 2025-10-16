@@ -1,0 +1,130 @@
+.session-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f8fa 0%, #e8f0f7 100%);
+}
+
+.session-header {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  padding: 32px 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.session-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.95;
+}
+
+.session-content {
+  display: grid;
+  grid-template-columns: 350px 1fr 380px;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.center-panel {
+  min-height: calc(100vh - 200px);
+}
+
+.right-panel {
+  position: sticky;
+  top: 24px;
+  height: fit-content;
+  max-height: calc(100vh - 48px);
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: white;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-overlay p {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+@media (max-width: 1400px) {
+  .session-content {
+    grid-template-columns: 320px 1fr 340px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .session-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .right-panel {
+    position: static;
+    max-height: none;
+  }
+  
+  .left-panel {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 768px) {
+  .session-header {
+    padding: 24px 20px;
+  }
+  
+  .session-header h1 {
+    font-size: 24px;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+  }
+  
+  .session-content {
+    padding: 16px;
+  }
+  
+  .left-panel {
+    flex-direction: column;
+  }
+}

@@ -1,1 +1,34 @@
-<p>animated-avatar works!</p>
+<div class="avatar-container">
+  <svg class="avatar" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Head -->
+    <circle cx="100" cy="100" r="80" fill="#ffd4a3" stroke="#e6b888" stroke-width="3"/>
+    
+    <!-- Hair -->
+    <ellipse cx="100" cy="60" rx="85" ry="50" fill="#654321"/>
+    
+    <!-- Eyes -->
+    <g class="eyes">
+      <ellipse class="eye-left" cx="75" cy="90" rx="8" ry="12" fill="#2c3e50"/>
+      <ellipse class="eye-right" cx="125" cy="90" rx="8" ry="12" fill="#2c3e50"/>
+      
+      <!-- Eyelids for blinking -->
+      <ellipse class="eyelid-left" cx="75" cy="90" rx="8" ry="12" fill="#ffd4a3" stroke="#e6b888" stroke-width="1"/>
+      <ellipse class="eyelid-right" cx="125" cy="90" rx="8" ry="12" fill="#ffd4a3" stroke="#e6b888" stroke-width="1"/>
+    </g>
+    
+    <!-- Nose -->
+    <path d="M 100 100 Q 95 110, 100 115" stroke="#d4a574" stroke-width="2" fill="none"/>
+    
+    <!-- Mouth - changes when talking -->
+    <g class="mouth" [class.talking]="isTalking">
+      <ellipse class="mouth-closed" cx="100" cy="135" rx="25" ry="8" fill="#d4576d" stroke="#b84158" stroke-width="2"/>
+      <ellipse class="mouth-open" cx="100" cy="135" rx="20" ry="15" fill="#d4576d" stroke="#b84158" stroke-width="2"/>
+    </g>
+    
+    <!-- Eyebrows -->
+    <path d="M 60 75 Q 75 70, 90 75" stroke="#4a2f1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M 110 75 Q 125 70, 140 75" stroke="#4a2f1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>
+  
+  <div class="avatar-label">Patient</div>
+</div>

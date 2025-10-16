@@ -1,1 +1,30 @@
-<p>session-view works!</p>
+<div class="session-container">
+  <header class="session-header">
+    <h1>Therapy Session Simulator</h1>
+    <p class="subtitle">Practice your therapeutic skills with AI-powered patient responses</p>
+  </header>
+
+  <div class="session-content">
+    <aside class="left-panel">
+      <app-patient-profile [patient]="patient"></app-patient-profile>
+      <app-animated-avatar [isTalking]="isTalking"></app-animated-avatar>
+    </aside>
+
+    <main class="center-panel">
+      <app-conversation-display 
+        [messages]="messages"
+        (sendMessage)="onSendMessage($event)"
+        (submitSession)="onSubmitSession()">
+      </app-conversation-display>
+    </main>
+
+    <aside class="right-panel">
+      <app-checklist-sidebar [checklistItems]="checklistItems"></app-checklist-sidebar>
+    </aside>
+  </div>
+
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Processing...</p>
+  </div>
+</div>

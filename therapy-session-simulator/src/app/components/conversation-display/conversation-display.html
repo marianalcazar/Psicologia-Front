@@ -1,1 +1,55 @@
-<p>conversation-display works!</p>
+<div class="conversation-container">
+  <div class="messages-area" #messagesArea>
+    <div class="message" 
+         *ngFor="let message of messages"
+         [class.patient-message]="message.sender === 'patient'"
+         [class.therapist-message]="message.sender === 'therapist'">
+      <div class="message-bubble">
+        <div class="message-header">
+          <span class="sender-label">{{ message.sender === 'patient' ? 'Patient' : 'You (Therapist)' }}</span>
+          <span class="message-time">{{ message.timestamp | date:'shortTime' }}</span>
+        </div>
+        <div class="message-text">{{ message.text }}</div>
+      </div>
+    </div>
+    
+    <div class="empty-state" *ngIf="messages.length === 0">
+      <mat-icon>chat_bubble_outline</mat-icon>
+      <p>Start the therapy session by greeting the patient</p>
+    </div>
+  </div>
+  
+  <div class="input-area">
+    <mat-form-field appearance="outline" class="message-input">
+      <mat-label>Your response as therapist...</mat-label>
+      <textarea 
+        matInput 
+        [(ngModel)]="therapistMessage"
+        (keydown.control.enter)="onSendMessage()"
+        rows="3"
+        placeholder="Type your therapeutic response here...">
+      </textarea>
+      <mat-hint>Press Ctrl+Enter to send</mat-hint>
+    </mat-form-field>
+    
+    <div class="action-buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="onSendMessage()"
+        [disabled]="!therapistMessage.trim()">
+        <mat-icon>send</mat-icon>
+        Send Message
+      </button>
+      
+      <button 
+        mat-raised-button 
+        color="accent" 
+        (click)="onSubmitSession()"
+        [disabled]="messages.length === 0">
+        <mat-icon>check_circle</mat-icon>
+        Complete Session
+      </button>
+    </div>
+  </div>
+</div>
