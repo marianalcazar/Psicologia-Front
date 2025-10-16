@@ -1,0 +1,3 @@
+modules = ["angular-node-20"]
+[agent]
+expertMode = true
