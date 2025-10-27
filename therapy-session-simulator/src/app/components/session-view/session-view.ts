@@ -5,6 +5,8 @@ import { AnimatedAvatar } from '../animated-avatar/animated-avatar';
 import { ChecklistSidebar, ChecklistItem } from '../checklist-sidebar/checklist-sidebar';
 import { ConversationDisplay, Message } from '../conversation-display/conversation-display';
 import { TherapyApi } from '../../services/therapy-api';
+import { AuthService } from '../../services/auth';
+ 
 
 @Component({
   selector: 'app-session-view',
@@ -56,7 +58,7 @@ export class SessionView implements OnInit {
   isTalking: boolean = false;
   isLoading: boolean = false;
 
-  constructor(private therapyApi: TherapyApi) {}
+  constructor(private therapyApi: TherapyApi,private auth:AuthService) {}
 
   ngOnInit() {
     this.loadPatientData();
@@ -98,7 +100,9 @@ export class SessionView implements OnInit {
       }
     });
   }
-
+async logout(){
+    await this.auth.logout();
+}
   onSubmitSession() {
     this.isLoading = true;
     this.therapyApi.submitSessionMock(this.messages).subscribe({

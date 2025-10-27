@@ -4,7 +4,7 @@ import { SessionView } from './components/session-view/session-view';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SessionView],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
