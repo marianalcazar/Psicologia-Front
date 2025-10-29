@@ -24,10 +24,9 @@
     </aside>
 
     <main class="center-panel">
-      <app-conversation-display 
+      <app-conversation-display
         [messages]="messages"
-        (sendMessage)="onSendMessage($event)"
-        (submitSession)="onSubmitSession()">
+        (sendMessage)="onSendMessage($event)">
       </app-conversation-display>
     </main>
 

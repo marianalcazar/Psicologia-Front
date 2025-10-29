@@ -6,7 +6,7 @@ import { ChecklistSidebar, ChecklistItem } from '../checklist-sidebar/checklist-
 import { ConversationDisplay, Message } from '../conversation-display/conversation-display';
 import { TherapyApi } from '../../services/therapy-api';
 import { AuthService } from '../../services/auth';
- 
+import { DialogoService } from '../../services/dialogo';
 
 @Component({
   selector: 'app-session-view',
@@ -58,7 +58,7 @@ export class SessionView implements OnInit {
   isTalking: boolean = false;
   isLoading: boolean = false;
 
-  constructor(private therapyApi: TherapyApi,private auth:AuthService) {}
+  constructor(private therapyApi: TherapyApi,private auth:AuthService, private dialogoService: DialogoService) {}
 
   ngOnInit() {
     this.loadPatientData();
@@ -78,53 +78,35 @@ export class SessionView implements OnInit {
     });
   }
 
-  onSendMessage(messageText: string) {
-    const therapistMessage: Message = {
+  onSendMessage(textoRespuesta: string) {
+    const teraputaMensaje: Message = {
       id: Date.now().toString(),
-      sender: 'therapist',
-      text: messageText,
+      sender: 'terapeuta',
+      text: textoRespuesta,
       timestamp: new Date()
     };
-    
-    this.messages.push(therapistMessage);
-    
-    this.isTalking = true;
-    this.therapyApi.getPatientResponseMock(messageText).subscribe({
-      next: (patientMessage) => {
-        this.messages.push(patientMessage);
-        this.isTalking = false;
+
+    this.messages.push(teraputaMensaje);
+
+    this.dialogoService.obtenerDialogo(textoRespuesta).subscribe({
+      next: (pacienteRespuesta) => {
+        const paciente: Message = {
+          id: Date.now().toString(),
+          sender: 'paciente',
+          text: pacienteRespuesta,
+          timestamp: new Date()
+        };
+        console.log("Paciente" + paciente)
+        console.log("Paciente" + pacienteRespuesta)
+        this.messages.push(paciente);
       },
-      error: (error) => {
-        console.error('Error getting patient response:', error);
-        this.isTalking = false;
+      error: (err) => {
+        console.error('Error getting patient response:', err);
       }
-    });
+    })
   }
 async logout(){
     await this.auth.logout();
 }
-  onSubmitSession() {
-    this.isLoading = true;
-    this.therapyApi.submitSessionMock(this.messages).subscribe({
-      next: (result) => {
-        console.log('Session submitted successfully:', result);
-        
-        if (result.checklistResults) {
-          Object.keys(result.checklistResults).forEach(key => {
-            const item = this.checklistItems.find(i => i.id === key);
-            if (item) {
-              item.completed = result.checklistResults[key];
-            }
-          });
-        }
-        
-        alert(`Session completed!\nScore: ${result.score}%\nFeedback: ${result.feedback}`);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error submitting session:', error);
-        this.isLoading = false;
-      }
-    });
-  }
+
 }

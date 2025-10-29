@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 export interface Message {
   id: string;
-  sender: 'patient' | 'therapist';
+  sender: 'paciente' | 'terapeuta';
   text: string;
   timestamp: Date;
 }
@@ -16,10 +16,10 @@ export interface Message {
 @Component({
   selector: 'app-conversation-display',
   imports: [
-    CommonModule, 
-    FormsModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatButtonModule,
     MatIconModule
   ],
@@ -30,7 +30,7 @@ export class ConversationDisplay {
   @Input() messages: Message[] = [];
   @Output() sendMessage = new EventEmitter<string>();
   @Output() submitSession = new EventEmitter<void>();
-  
+
   therapistMessage: string = '';
 
   onKeyDown(event: KeyboardEvent) {
