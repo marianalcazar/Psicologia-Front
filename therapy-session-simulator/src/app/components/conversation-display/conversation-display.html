@@ -6,10 +6,10 @@
          [class.therapist-message]="message.sender === 'terapeuta'">
       <div class="message-bubble">
         <div class="message-header">
-          <span class="sender-label">{{ message.sender === 'paciente' ? 'Patient' : 'You (Therapist)' }}</span>
+          <span class="sender-label">{{ message.sender === 'paciente' ? 'Paciente' : 'Tu (Terapeuta)' }}</span>
           <span class="message-time">{{ message.timestamp | date:'shortTime' }}</span>
         </div>
-        <div class="message-text">{{ message }}</div>
+        <div class="message-text">{{ message.text }}</div>
       </div>
     </div>
 
