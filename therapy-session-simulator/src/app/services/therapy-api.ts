@@ -29,7 +29,7 @@ export class TherapyApi {
       ],
       lastSessionSummary: 'Discussed difficulty setting boundaries at work. Patient reported feeling overwhelmed by constant demands from colleagues. Agreed to practice saying "no" and prioritizing tasks.'
     };
-    
+
     return of(mockPatient).pipe(delay(500));
   }
 
@@ -44,16 +44,16 @@ export class TherapyApi {
       "It's hard to balance everything. Sometimes I feel like I'm failing at both work and personal life.",
       "I appreciate your support. This is really helping me see things differently."
     ];
-    
+
     const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-    
+
     const patientMessage: Message = {
       id: Date.now().toString(),
-      sender: 'patient',
+      sender: 'paciente',
       text: randomResponse,
       timestamp: new Date()
     };
-    
+
     return of(patientMessage).pipe(delay(1000));
   }
 

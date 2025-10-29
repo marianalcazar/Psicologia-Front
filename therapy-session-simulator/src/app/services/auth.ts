@@ -1,7 +1,7 @@
 import { Injectable, signal, computed } from "@angular/core";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signOut, User, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
-import { environment } from "../../../eviroment";
+import { environment } from "../../../enviroment";
 import { Router } from "@angular/router";
 
 @Injectable({ providedIn: 'root' })
@@ -10,12 +10,12 @@ export class AuthService {
   public user = signal<User | null>(null);
 
   constructor(private router: Router) {
-  
+
     initializeApp(environment.firebaseConfig);
     this.auth = getAuth();
 
-    
-    onAuthStateChanged(this.auth, (user) => this.user.set(user));
+
+    onAuthStateChanged(this.auth, (user: any) => this.user.set(user));
   }
 
   async login(email: string, password: string) {
