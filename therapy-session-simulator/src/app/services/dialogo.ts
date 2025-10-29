@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {map, Observable} from 'rxjs';
 import { environment } from "../../../enviroment";
 
 @Injectable({
@@ -18,9 +18,10 @@ export class DialogoService {
       params = params.set('user_input', userInput);
     }
 
-    return this.http.get(`${this.apiUrl}/obtener_dialogo`, {
-      params,
-      responseType: 'text'
-    });
+    return this.http.get<{mensaje: string}>(`${this.apiUrl}/obtener_dialogo`, {
+      params
+    }).pipe(
+      map((response: { mensaje: any; }) => response.mensaje)
+    );
   }
 }
