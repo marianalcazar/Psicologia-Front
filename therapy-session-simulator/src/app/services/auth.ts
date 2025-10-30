@@ -48,6 +48,9 @@ export class AuthService {
     try {
       await signOut(this.auth);
       this.user.set(null);
+       localStorage.removeItem('token');   
+    sessionStorage.removeItem('token');  
+
       this.router.navigate(['/login']);
     } catch (error) {
       console.error(error);
@@ -61,4 +64,6 @@ export class AuthService {
   async getToken() {
     return this.user()?.getIdToken() ?? null;
   }
+
+  
 }

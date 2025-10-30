@@ -64,6 +64,12 @@ mat-chip {
   background-color: #e3f2fd;
   color: #1976d2;
 }
+.patient-avatar {
+  width: 60px;          /* ancho fijo */
+  height: 60px;         /* alto fijo */
+  border-radius: 50%;   /* opcional: para hacerla circular */
+  object-fit: cover;    /* mantiene proporción, recorta si es necesario */
+}
 
 .goals-list {
   margin: 8px 0 0 0;

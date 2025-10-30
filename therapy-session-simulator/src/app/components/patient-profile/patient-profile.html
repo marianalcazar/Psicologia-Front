@@ -1,49 +1,81 @@
-<mat-card class="patient-card" *ngIf="patient">
+<!-- Loading indicator -->
+<div class="loading-container" *ngIf="isLoading">
+  <mat-spinner></mat-spinner>
+  <p>Cargando información del paciente...</p>
+</div>
+
+<!-- Error message -->
+<div class="error-container" *ngIf="error && !isLoading">
+  <mat-icon color="warn">error_outline</mat-icon>
+  <p>{{ error }}</p>
+  <button mat-raised-button color="primary" (click)="inicializarPaciente()">
+    <mat-icon>refresh</mat-icon>
+    Reintentar
+  </button>
+</div>
+
+<!-- Patient Card -->
+<mat-card class="patient-card" *ngIf="patient && !isLoading">
   <mat-card-header>
     <mat-card-title>
       <div class="patient-header">
         <div class="patient-icon">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Si tienes imagen del paciente -->
+          <img *ngIf="patient.image" [src]="patient.image" alt="Patient avatar" class="patient-avatar">
+          
+          <!-- SVG default si no hay imagen -->
+          <svg *ngIf="!patient.image" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="20" cy="20" r="18" fill="#2196F3" opacity="0.2"/>
             <circle cx="20" cy="15" r="6" fill="#2196F3"/>
             <path d="M 10 35 Q 20 25, 30 35" fill="#2196F3"/>
           </svg>
         </div>
+        
         <div class="patient-info">
-          <h2>{{ patient.name }}</h2>
-          <p class="session-number">Session #{{ patient.sessionNumber }}</p>
+          <h2>{{ patient.nombre }}</h2>
+          <p class="patient-age">{{ patient.edad }}</p>
         </div>
       </div>
     </mat-card-title>
   </mat-card-header>
-  
+
   <mat-card-content>
-    <div class="info-section" *ngIf="patient.profession">
-      <label>Profession:</label>
-      <p>{{ patient.profession }}</p>
-    </div>
-    
-    <div class="info-section" *ngIf="patient.mainConcerns && patient.mainConcerns.length > 0">
-      <label>Main Concerns:</label>
+    <!-- Main Concerns -->
+    <div class="info-section" *ngIf="patient.MAIN_CONCERNS && patient.MAIN_CONCERNS.length > 0">
+      <label>Preocupaciones Principales:</label>
       <mat-chip-set>
-        <mat-chip *ngFor="let concern of patient.mainConcerns">{{ concern }}</mat-chip>
+        <mat-chip *ngFor="let concern of patient.MAIN_CONCERNS" class="concern-chip">
+          {{ concern }}
+        </mat-chip>
       </mat-chip-set>
     </div>
-    
-    <div class="info-section" *ngIf="patient.treatmentGoals && patient.treatmentGoals.length > 0">
-      <label>Treatment Goals:</label>
+
+    <!-- Treatment Goals -->
+    <div class="info-section" *ngIf="patient.TREATMENT_GOALS && patient.TREATMENT_GOALS.length > 0">
+      <label>Objetivos de Tratamiento:</label>
       <ul class="goals-list">
-        <li *ngFor="let goal of patient.treatmentGoals">{{ goal }}</li>
+        <li *ngFor="let goal of patient.TREATMENT_GOALS">{{ goal }}</li>
       </ul>
     </div>
-    
-    <div class="info-section last-session" *ngIf="patient.lastSessionSummary">
-      <label>Last Session Summary:</label>
-      <p class="summary-text">{{ patient.lastSessionSummary }}</p>
-    </div>
   </mat-card-content>
+
+  <!-- Actions -->
+  <mat-card-actions align="end">
+    <button mat-button color="primary" (click)="obtenerResumen()" [disabled]="isLoading">
+      <mat-icon>refresh</mat-icon>
+      Actualizar
+    </button>
+    
+  
+  </mat-card-actions>
 </mat-card>
 
-<div class="no-patient" *ngIf="!patient">
-  <p>No patient data loaded</p>
+<!-- No patient message (solo si no está cargando y no hay paciente) -->
+<div class="no-patient" *ngIf="!patient && !isLoading && !error">
+  <mat-icon>person_off</mat-icon>
+  <p>No hay información del paciente disponible</p>
+  <button mat-raised-button color="accent" (click)="inicializarPaciente()">
+    <mat-icon>refresh</mat-icon>
+    Cargar Información
+  </button>
 </div>

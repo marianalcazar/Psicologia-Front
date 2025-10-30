@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import {map, Observable} from 'rxjs';
+import { HttpClient, HttpHeaderResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import {from, map, Observable, switchMap} from 'rxjs';
 import { environment } from "../../../enviroment";
+import { AuthService } from './auth';
+import { ResumenPaciente } from '../interfaces/resumenpaciente.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,8 @@ export class DialogoService {
 
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private auth:AuthService) { }
+
 
   obtenerDialogo(userInput?: string): Observable<string> {
     let params = new HttpParams();
@@ -18,10 +21,51 @@ export class DialogoService {
       params = params.set('user_input', userInput);
     }
 
-    return this.http.get<{mensaje: string}>(`${this.apiUrl}/obtener_dialogo`, {
-      params
-    }).pipe(
-      map((response: { mensaje: any; }) => response.mensaje)
+    return from(this.auth.getToken()).pipe(
+      switchMap(token => {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        });
+
+        return this.http.get<{ mensaje: string }>(`${this.apiUrl}/obtener_dialogo`, {
+          params,
+          headers
+        });
+      }),
+      map(response => response.mensaje)
+    );
+  }
+
+  inicializarPaciente(): Observable<ResumenPaciente> {
+    return from(this.auth.getToken()).pipe(
+      switchMap(token => {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        });
+
+        return this.http.post<ResumenPaciente>(
+          `${this.apiUrl}/paciente/inicializar`,
+          {}, // Body vacío
+          { headers }
+        );
+      })
+    );
+  }
+   obtenerResumenPaciente(): Observable<ResumenPaciente> {
+    return from(this.auth.getToken()).pipe(
+      switchMap(token => {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        });
+
+        return this.http.get<ResumenPaciente>(
+          `${this.apiUrl}/paciente/resumen`,
+          { headers }
+        );
+      })
     );
   }
 }

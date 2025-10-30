@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, delay } from 'rxjs';
-import { Patient } from '../components/patient-profile/patient-profile';
+ 
 import { Message } from '../components/conversation-display/conversation-display';
+import { ResumenPaciente } from '../interfaces/resumenpaciente.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -12,22 +13,22 @@ export class TherapyApi {
 
   constructor(private http: HttpClient) {}
 
-  getPatientData(patientId: string): Observable<Patient> {
-    return this.http.get<Patient>(`${this.apiUrl}/patient/${patientId}`);
-  }
+ /* getPatientData(patientId: string): Observable<ResumenPaciente> {
+    return this.http.get<ResumenPaciente>(`${this.apiUrl}/patient/${patientId}`);
+  }*/
 
-  getPatientDataMock(): Observable<Patient> {
-    const mockPatient: Patient = {
-      name: 'John Smith',
-      sessionNumber: 3,
-      mainConcerns: ['Work stress', 'Boundary setting', 'Anxiety'],
-      profession: 'Software Engineer',
-      treatmentGoals: [
+  getPatientDataMock(): Observable<ResumenPaciente> {
+    const mockPatient: ResumenPaciente = {
+      nombre: 'John Smith',
+      image:'',
+      edad: 35,
+      MAIN_CONCERNS: ['Work stress', 'Boundary setting', 'Anxiety'],
+      
+      TREATMENT_GOALS: [
         'Learn to set healthy boundaries at work',
         'Develop coping strategies for anxiety',
         'Improve work-life balance'
       ],
-      lastSessionSummary: 'Discussed difficulty setting boundaries at work. Patient reported feeling overwhelmed by constant demands from colleagues. Agreed to practice saying "no" and prioritizing tasks.'
     };
 
     return of(mockPatient).pipe(delay(500));

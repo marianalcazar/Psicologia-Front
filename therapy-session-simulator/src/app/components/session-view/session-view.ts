@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PatientProfile, Patient } from '../patient-profile/patient-profile';
+import { PatientProfile,  } from '../patient-profile/patient-profile';
 import { AnimatedAvatar } from '../animated-avatar/animated-avatar';
 import { ChecklistSidebar, ChecklistItem } from '../checklist-sidebar/checklist-sidebar';
 import { ConversationDisplay, Message } from '../conversation-display/conversation-display';
@@ -21,7 +21,7 @@ import { DialogoService } from '../../services/dialogo';
   styleUrl: './session-view.css'
 })
 export class SessionView implements OnInit {
-  patient: Patient | null = null;
+ 
   messages: Message[] = [];
   checklistItems: ChecklistItem[] = [
     {
@@ -64,11 +64,14 @@ export class SessionView implements OnInit {
     this.loadPatientData();
   }
 
-  loadPatientData() {
+  async loadPatientData() {
     this.isLoading = true;
+    var token= await this.auth.getToken();
+    console.log("Token en session view: " + token);
+
     this.therapyApi.getPatientDataMock().subscribe({
       next: (patient) => {
-        this.patient = patient;
+       
         this.isLoading = false;
       },
       error: (error) => {
