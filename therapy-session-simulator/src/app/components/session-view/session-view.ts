@@ -8,6 +8,7 @@ import { TherapyApi } from '../../services/therapy-api';
 import { AuthService } from '../../services/auth';
 import { DialogoService } from '../../services/dialogo';
 
+declare var webkitSpeechRecognition: any;
 @Component({
   selector: 'app-session-view',
   imports: [
@@ -20,9 +21,12 @@ import { DialogoService } from '../../services/dialogo';
   templateUrl: './session-view.html',
   styleUrl: './session-view.css'
 })
+
 export class SessionView implements OnInit {
  
   messages: Message[] = [];
+  isRecording: boolean = false;
+  recognition: any;
   checklistItems: ChecklistItem[] = [
     {
       id: 'initial-summary',
@@ -62,6 +66,7 @@ export class SessionView implements OnInit {
 
   ngOnInit() {
     this.loadPatientData();
+    this.setupVoiceRecognition();
   }
 
   async loadPatientData() {
@@ -79,6 +84,43 @@ export class SessionView implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  async setupVoiceRecognition() {
+  const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.error('Speech Recognition API not supported in this browser.');
+      return;
+    }
+    this.recognition = new SpeechRecognition();
+    this.recognition.lang = 'es-ES';
+    this.recognition.interimResults = false;
+    this.recognition.continuous = false;
+
+    this.recognition.onresult = (event:any) =>{
+      const texto = event.results[0][0].transcript;
+      console.log('Texto reconocido:', texto);
+      this.onSendMessage(texto);
+      this.isRecording = false;
+    }
+    this.recognition.onerror = (event:any) => {
+    console.error('Error en el reconocimiento de voz:', event.error);
+    this.isRecording = false;
+  }
+    this.recognition.onend= () =>(this.isRecording =false);
+  }
+startRecording() {
+if(!this.recognition) return;
+this.isRecording = true;
+this.recognition.start();
+
+}
+  stopRecording(){
+     if (this.recognition && this.isRecording) {
+      this.isRecording = false;
+      this.recognition.stop();
+    }
   }
 
   onSendMessage(textoRespuesta: string) {
@@ -102,11 +144,19 @@ export class SessionView implements OnInit {
         console.log("Paciente" + paciente)
         console.log("Paciente" + pacienteRespuesta)
         this.messages.push(paciente);
+        this.speakText(pacienteRespuesta);
       },
       error: (err) => {
         console.error('Error getting patient response:', err);
       }
     })
+  }
+
+  async speakText(text:string){
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-ES';
+    utterance.rate = 1;
+    speechSynthesis.speak(utterance);
   }
 async logout(){
     await this.auth.logout();

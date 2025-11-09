@@ -197,3 +197,30 @@
     flex-direction: column;
   }
 }
+.voice-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.voice-btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-size: 16px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.voice-btn.recording {
+  background-color: #dc3545;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}

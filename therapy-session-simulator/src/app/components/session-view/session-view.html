@@ -29,7 +29,15 @@
         (sendMessage)="onSendMessage($event)">
       </app-conversation-display>
     </main>
-
+ <div class="voice-controls">
+    <button 
+      class="voice-btn"
+      [class.recording]="isRecording"
+      (mousedown)="startRecording()"
+      (mouseup)="stopRecording()">
+      {{ isRecording ? '🎙️ Grabando...' : '🎤 Hablar' }}
+    </button>
+  </div>
     <aside class="right-panel">
       <app-checklist-sidebar [checklistItems]="checklistItems"></app-checklist-sidebar>
     </aside>
