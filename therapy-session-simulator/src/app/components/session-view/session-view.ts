@@ -7,6 +7,7 @@ import { ConversationDisplay, Message } from '../conversation-display/conversati
 import { TherapyApi } from '../../services/therapy-api';
 import { AuthService } from '../../services/auth';
 import { DialogoService } from '../../services/dialogo';
+import { ThreeAvatar } from '../three-avatar/three-avatar';
 
 declare var webkitSpeechRecognition: any;
 @Component({
@@ -15,6 +16,7 @@ declare var webkitSpeechRecognition: any;
     CommonModule,
     PatientProfile,
     AnimatedAvatar,
+    ThreeAvatar,
     ChecklistSidebar,
     ConversationDisplay
   ],
@@ -152,12 +154,19 @@ this.recognition.start();
     })
   }
 
-  async speakText(text:string){
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'es-ES';
-    utterance.rate = 1;
-    speechSynthesis.speak(utterance);
-  }
+  async speakText(text: string) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'es-ES';
+  utterance.rate = 1;
+
+  this.isTalking = true; // activar movimiento de boca
+
+  utterance.onend = () => {
+    this.isTalking = false; // desactivar movimiento al terminar
+  };
+
+  speechSynthesis.speak(utterance);
+}
 async logout(){
     await this.auth.logout();
 }

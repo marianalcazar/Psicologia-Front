@@ -19,8 +19,12 @@
 
   <div class="session-content">
     <aside class="left-panel">
+ <app-three-avatar
+  [modelUrl]="'assets/models/paciente3.glb'"
+  [isTalking]="isTalking">
+</app-three-avatar>
       <app-patient-profile ></app-patient-profile>
-      <app-animated-avatar [isTalking]="isTalking"></app-animated-avatar>
+     
     </aside>
 
     <main class="center-panel">
