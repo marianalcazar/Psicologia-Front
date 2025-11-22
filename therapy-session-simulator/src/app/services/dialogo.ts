@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaderResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import {from, map, Observable, switchMap} from 'rxjs';
+import { from, map, Observable, switchMap } from 'rxjs';
 import { environment } from "../../../enviroment";
 import { AuthService } from './auth';
 import { ResumenPaciente } from '../interfaces/resumenpaciente.interface';
@@ -12,7 +12,7 @@ export class DialogoService {
 
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient,private auth:AuthService) { }
+  constructor(private http: HttpClient, private auth: AuthService) { }
 
 
   obtenerDialogo(userInput?: string): Observable<string> {
@@ -53,7 +53,7 @@ export class DialogoService {
       })
     );
   }
-   obtenerResumenPaciente(): Observable<ResumenPaciente> {
+  obtenerResumenPaciente(): Observable<ResumenPaciente> {
     return from(this.auth.getToken()).pipe(
       switchMap(token => {
         const headers = new HttpHeaders({

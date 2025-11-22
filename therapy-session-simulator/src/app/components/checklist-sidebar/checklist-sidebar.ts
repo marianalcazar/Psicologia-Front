@@ -18,21 +18,21 @@ export interface ChecklistItem {
 export class ChecklistSidebar {
   @Input() checklistItems: ChecklistItem[] = [
     {
-      id: 'initial-summary',
-      title: 'Initial Summary',
-      description: 'Start with an open-ended question that connects to the previous session',
+      id: 'rapport-inicial',
+      title: 'Rapport (Bienvenida)',
+      description: 'Establecimiento de la conexión inicial con el paciente, creando un ambiente de confianza y comodidad para facilitar la comunicación terapéutica.',
       completed: false
     },
     {
-      id: 'topic-development',
-      title: 'Topic Development',
-      description: 'Patient presents a new challenge or delves deeper into previous topic',
+      id: 'pregunta-refleja',
+      title: 'Pregunta Refleja',
+      description: 'Técnica que devuelve al paciente sus propias palabras o emociones expresadas, ayudándole a profundizar en su autoconocimiento y reflexión',
       completed: false
     },
     {
-      id: 'empathy-listening',
-      title: 'Empathy & Active Listening',
-      description: 'Show empathy and include clarification questions',
+      id: 'validacion',
+      title: 'Validación',
+      description: 'Reconocimiento y legitimación de las emociones y experiencias del paciente, transmitiendo que sus sentimientos son comprensibles y aceptables.',
       completed: false
     },
     {
@@ -42,9 +42,9 @@ export class ChecklistSidebar {
       completed: false
     },
     {
-      id: 'session-closure',
-      title: 'Homework & Closure',
-      description: 'Suggest homework task and summarize key points',
+      id: 'objetivo-terapeutico',
+      title: 'Objetivo Terapéutico',
+      description: 'Identificación y definición clara de las metas específicas que el paciente desea alcanzar durante el proceso terapéutico.',
       completed: false
     }
   ];
