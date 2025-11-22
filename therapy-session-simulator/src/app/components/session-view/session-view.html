@@ -1,47 +1,35 @@
 <div class="session-container">
 
-<header class="session-header">
-  <div class="header-content">
-    <div class="header-text">
-      <h1>Therapy Session Simulator</h1>
-      <p class="subtitle">Practice your therapeutic skills with AI-powered patient responses</p>
+  <header class="session-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Therapy Session Simulator</h1>
+        <p class="subtitle">Practice your therapeutic skills with AI-powered patient responses</p>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Cerrar Sesión
+      </button>
     </div>
-    <button class="logout-btn" (click)="logout()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-        <polyline points="16 17 21 12 16 7"></polyline>
-        <line x1="21" y1="12" x2="9" y2="12"></line>
-      </svg>
-      Cerrar Sesión
-    </button>
-  </div>
-</header>
+  </header>
 
   <div class="session-content">
     <aside class="left-panel">
- <app-three-avatar
-  [modelUrl]="'assets/models/paciente3.glb'"
-  [isTalking]="isTalking">
-</app-three-avatar>
-      <app-patient-profile ></app-patient-profile>
-     
+
+      <app-patient-profile></app-patient-profile>
+
     </aside>
 
     <main class="center-panel">
-      <app-conversation-display
-        [messages]="messages"
-        (sendMessage)="onSendMessage($event)">
+      <app-conversation-display [messages]="messages" (sendMessage)="onSendMessage($event)">
       </app-conversation-display>
     </main>
- <div class="voice-controls">
-    <button 
-      class="voice-btn"
-      [class.recording]="isRecording"
-      (mousedown)="startRecording()"
-      (mouseup)="stopRecording()">
-      {{ isRecording ? '🎙️ Grabando...' : '🎤 Hablar' }}
-    </button>
-  </div>
+
     <aside class="right-panel">
       <app-checklist-sidebar [checklistItems]="checklistItems"></app-checklist-sidebar>
     </aside>
