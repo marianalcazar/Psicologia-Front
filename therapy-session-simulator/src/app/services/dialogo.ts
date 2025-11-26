@@ -15,7 +15,7 @@ export class DialogoService {
   constructor(private http: HttpClient, private auth: AuthService) { }
 
 
-  obtenerDialogo(userInput?: string): Observable<string> {
+  obtenerDialogo(userInput?: string): Observable<{ mensaje: string, checklist_terapeutico: any }> {
     let params = new HttpParams();
     if (userInput) {
       params = params.set('user_input', userInput);
@@ -28,12 +28,11 @@ export class DialogoService {
           'Content-Type': 'application/json'
         });
 
-        return this.http.get<{ mensaje: string }>(`${this.apiUrl}/obtener_dialogo`, {
+        return this.http.get<{ mensaje: string, checklist_terapeutico: any }>(`${this.apiUrl}/obtener_dialogo`, {
           params,
           headers
         });
-      }),
-      map(response => response.mensaje)
+      })
     );
   }
 

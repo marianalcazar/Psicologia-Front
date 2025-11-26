@@ -119,32 +119,78 @@ export class SessionView implements OnInit {
   }
 
   onSendMessage(textoRespuesta: string) {
-    const teraputaMensaje: Message = {
+    const terapeutaMensaje: Message = {
       id: Date.now().toString(),
       sender: 'terapeuta',
       text: textoRespuesta,
       timestamp: new Date()
     };
 
-    this.messages.push(teraputaMensaje);
+    this.messages.push(terapeutaMensaje);
 
     this.dialogoService.obtenerDialogo(textoRespuesta).subscribe({
-      next: (pacienteRespuesta) => {
+      next: (response) => {
+        console.log('Respuesta completa del backend:', response);
+
+        const mensajePaciente = response.mensaje;
+        const checklistData = response.checklist_terapeutico;
+
         const paciente: Message = {
           id: Date.now().toString(),
           sender: 'paciente',
-          text: pacienteRespuesta,
+          text: mensajePaciente,
           timestamp: new Date()
         };
-        console.log("Paciente" + paciente)
-        console.log("Paciente" + pacienteRespuesta)
+
+        console.log("Mensaje del paciente:", mensajePaciente);
+        console.log("Checklist recibido:", checklistData);
+
         this.messages.push(paciente);
-        //this.speakText(pacienteRespuesta);
+
+        if (checklistData) {
+          this.actualizarChecklist(checklistData);
+        }
       },
       error: (err) => {
         console.error('Error getting patient response:', err);
       }
-    })
+    });
+  }
+
+  private actualizarChecklist(checklistData: any) {
+
+    if (!checklistData || typeof checklistData !== 'object') {
+      console.warn('Checklist data inválido:', checklistData);
+      return;
+    }
+
+    const mapeoChecklist: { [key: string]: string } = {
+      'rapport': 'rapport-inicial',
+      'pregunta_refleja': 'pregunta-refleja',
+      'validacion': 'validacion',
+      'objetivo_terapeutico': 'objetivo-terapeutico'
+    };
+
+    console.log('Datos del checklist recibidos:', checklistData);
+
+    Object.keys(checklistData).forEach(key => {
+      const itemId = mapeoChecklist[key];
+
+      if (itemId) {
+        const item = this.checklistItems.find(i => i.id === itemId);
+
+        if (item) {
+          item.completed = checklistData[key] === true;
+          console.log(`Item "${itemId}" actualizado a:`, item.completed);
+        } else {
+          console.warn(`Item con id "${itemId}" no encontrado en checklistItems`);
+        }
+      } else {
+        console.warn(`Key "${key}" no tiene mapeo en mapeoChecklist`);
+      }
+    });
+
+    console.log('Checklist actualizado:', this.checklistItems);
   }
 
   async speakText(text: string) {
