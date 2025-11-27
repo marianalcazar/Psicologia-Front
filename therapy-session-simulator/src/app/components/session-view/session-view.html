@@ -1,3 +1,4 @@
+<!-- src/app/features/therapy-session/therapy-session.component.html -->
 <div class="session-container">
 
   <header class="session-header">
@@ -20,18 +21,16 @@
 
   <div class="session-content">
     <aside class="left-panel">
-
       <app-patient-profile></app-patient-profile>
-
     </aside>
 
-    <main class="center-panel">
-      <app-conversation-display [messages]="messages" (sendMessage)="onSendMessage($event)">
-      </app-conversation-display>
-    </main>
+    <app-conversation-display
+      [messages]="messages"
+      (sendMessage)="onSendMessage($event)">
+    </app-conversation-display>
 
     <aside class="right-panel">
-      <app-checklist-sidebar [checklistItems]="checklistItems"></app-checklist-sidebar>
+      <app-checklist-sidebar ></app-checklist-sidebar>
     </aside>
   </div>
 

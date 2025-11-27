@@ -1,177 +1,188 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/features/therapy-session/components/session-view/session-view.component.ts
+
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PatientProfile, } from '../patient-profile/patient-profile';
-import { AnimatedAvatar } from '../animated-avatar/animated-avatar';
+import { Subject, takeUntil } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { PatientProfile } from '../patient-profile/patient-profile';
 import { ChecklistSidebar, ChecklistItem } from '../checklist-sidebar/checklist-sidebar';
 import { ConversationDisplay, Message } from '../conversation-display/conversation-display';
 import { TherapyApi } from '../../services/therapy-api';
 import { AuthService } from '../../services/auth';
 import { DialogoService } from '../../services/dialogo';
-import { ThreeAvatar } from '../three-avatar/three-avatar';
 
-declare var webkitSpeechRecognition: any;
 @Component({
   selector: 'app-session-view',
+  standalone: true,
   imports: [
     CommonModule,
     PatientProfile,
-    ThreeAvatar,
     ChecklistSidebar,
     ConversationDisplay
   ],
   templateUrl: './session-view.html',
-  styleUrl: './session-view.css'
+  styleUrls: ['./session-view.css']
 })
-
-export class SessionView implements OnInit {
-
+export class SessionView implements OnInit, OnDestroy {
+  
   messages: Message[] = [];
-  isRecording: boolean = false;
-  recognition: any;
   checklistItems: ChecklistItem[] = [
     {
-      id: 'rapport-inicial',
+      id: 'rapport',
       title: 'Rapport (Bienvenida)',
-      description: 'Establecimiento de la conexión inicial con el paciente, creando un ambiente de confianza y comodidad para facilitar la comunicación terapéutica.',
+      description: 'Establecimiento de la conexión inicial con el paciente',
       completed: false
     },
     {
-      id: 'pregunta-refleja',
+      id: 'pregunta_refleja',
       title: 'Pregunta Refleja',
-      description: 'Técnica que devuelve al paciente sus propias palabras o emociones expresadas, ayudándole a profundizar en su autoconocimiento y reflexión',
+      description: 'Técnica que devuelve al paciente sus propias palabras',
       completed: false
     },
     {
       id: 'validacion',
       title: 'Validación',
-      description: 'Reconocimiento y legitimación de las emociones y experiencias del paciente, transmitiendo que sus sentimientos son comprensibles y aceptables.',
+      description: 'Reconocimiento de las emociones del paciente',
       completed: false
     },
     {
-      id: 'objetivo-terapeutico',
+      id: 'objetivo_terapeutico',
       title: 'Objetivo Terapéutico',
-      description: 'Identificación y definición clara de las metas específicas que el paciente desea alcanzar durante el proceso terapéutico.',
+      description: 'Identificación de metas específicas',
       completed: false
     }
   ];
-  isTalking: boolean = false;
+  
   isLoading: boolean = false;
+  isSending: boolean = false;
+  
+  private destroy$ = new Subject<void>();
 
-  constructor(private therapyApi: TherapyApi, private auth: AuthService, private dialogoService: DialogoService) { }
+  constructor(
+    private therapyApi: TherapyApi,
+    private auth: AuthService,
+    private dialogoService: DialogoService,
+    private snackBar: MatSnackBar
+  ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadPatientData();
-    //this.setupVoiceRecognition();
+    this.suscribirseAChecklist();
   }
 
-  async loadPatientData() {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  async loadPatientData(): Promise<void> {
     this.isLoading = true;
-    var token = await this.auth.getToken();
-    console.log("Token en session view: " + token);
+    
+    try {
+      const token = await this.auth.getToken();
+      console.log("Token en session view: " + token);
 
-    this.therapyApi.getPatientDataMock().subscribe({
-      next: (patient) => {
-
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading patient data:', error);
-        this.isLoading = false;
-      }
-    });
+      this.therapyApi.getPatientDataMock().subscribe({
+        next: (patient) => {
+          console.log('Patient data loaded:', patient);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading patient data:', error);
+          this.snackBar.open(
+            'Error al cargar datos del paciente',
+            'Cerrar',
+            { duration: 3000 }
+          );
+          this.isLoading = false;
+        }
+      });
+    } catch (error) {
+      console.error('Error getting token:', error);
+      this.isLoading = false;
+    }
   }
 
-  async setupVoiceRecognition() {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.error('Speech Recognition API not supported in this browser.');
+  private suscribirseAChecklist(): void {
+    this.dialogoService.checklist$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(checklist => {
+        if (checklist) {
+          this.actualizarChecklist(checklist);
+        }
+      });
+  }
+
+  onSendMessage(textoRespuesta: string): void {
+    if (!textoRespuesta?.trim() || this.isSending) {
       return;
     }
-    this.recognition = new SpeechRecognition();
-    this.recognition.lang = 'es-ES';
-    this.recognition.interimResults = false;
-    this.recognition.continuous = false;
 
-    this.recognition.onresult = (event: any) => {
-      const texto = event.results[0][0].transcript;
-      console.log('Texto reconocido:', texto);
-      this.onSendMessage(texto);
-      this.isRecording = false;
-    }
-    this.recognition.onerror = (event: any) => {
-      console.error('Error en el reconocimiento de voz:', event.error);
-      this.isRecording = false;
-    }
-    this.recognition.onend = () => (this.isRecording = false);
-  }
-  startRecording() {
-    if (!this.recognition) return;
-    this.isRecording = true;
-    this.recognition.start();
-
-  }
-  stopRecording() {
-    if (this.recognition && this.isRecording) {
-      this.isRecording = false;
-      this.recognition.stop();
-    }
-  }
-
-  onSendMessage(textoRespuesta: string) {
     const terapeutaMensaje: Message = {
       id: Date.now().toString(),
       sender: 'terapeuta',
-      text: textoRespuesta,
+      text: textoRespuesta.trim(),
       timestamp: new Date()
     };
 
-    this.messages.push(terapeutaMensaje);
+    this.messages = [...this.messages, terapeutaMensaje];
+    this.isSending = true;
 
-    this.dialogoService.obtenerDialogo(textoRespuesta).subscribe({
-      next: (response) => {
-        console.log('Respuesta completa del backend:', response);
+    this.dialogoService.enviarMensaje(textoRespuesta.trim())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log('Respuesta completa del backend:', response);
 
-        const mensajePaciente = response.mensaje;
-        const checklistData = response.checklist_terapeutico;
+          const pacienteMensaje: Message = {
+            id: (Date.now() + 1).toString(),
+            sender: 'paciente',
+            text: response.mensaje_paciente,
+            timestamp: new Date()
+          };
 
-        const paciente: Message = {
-          id: Date.now().toString(),
-          sender: 'paciente',
-          text: mensajePaciente,
-          timestamp: new Date()
-        };
+          this.messages = [...this.messages, pacienteMensaje];
 
-        console.log("Mensaje del paciente:", mensajePaciente);
-        console.log("Checklist recibido:", checklistData);
+          if (response.checklist_terapeutico) {
+            this.actualizarChecklist(response.checklist_terapeutico);
+          }
 
-        this.messages.push(paciente);
+          if (response.sesionCompletada) {
+            this.snackBar.open(
+              '🎉 ¡Felicidades! Checklist completado',
+              'OK',
+              { duration: 5000 }
+            );
+          }
 
-        if (checklistData) {
-          this.actualizarChecklist(checklistData);
+          this.isSending = false;
+        },
+        error: (error) => {
+          console.error('Error al enviar mensaje:', error);
+          this.snackBar.open(
+            'Error al obtener respuesta del paciente',
+            'Cerrar',
+            { duration: 3000 }
+          );
+          this.isSending = false;
         }
-      },
-      error: (err) => {
-        console.error('Error getting patient response:', err);
-      }
-    });
+      });
   }
 
-  private actualizarChecklist(checklistData: any) {
-
+  private actualizarChecklist(checklistData: any): void {
     if (!checklistData || typeof checklistData !== 'object') {
       console.warn('Checklist data inválido:', checklistData);
       return;
     }
 
     const mapeoChecklist: { [key: string]: string } = {
-      'rapport': 'rapport-inicial',
-      'pregunta_refleja': 'pregunta-refleja',
+      'rapport': 'rapport',
+      'pregunta_refleja': 'pregunta_refleja',
       'validacion': 'validacion',
-      'objetivo_terapeutico': 'objetivo-terapeutico'
+      'objetivo_terapeutico': 'objetivo_terapeutico'
     };
 
-    console.log('Datos del checklist recibidos:', checklistData);
+    console.log('Actualizando checklist con:', checklistData);
 
     Object.keys(checklistData).forEach(key => {
       const itemId = mapeoChecklist[key];
@@ -180,34 +191,20 @@ export class SessionView implements OnInit {
         const item = this.checklistItems.find(i => i.id === itemId);
 
         if (item) {
-          item.completed = checklistData[key] === true;
-          console.log(`Item "${itemId}" actualizado a:`, item.completed);
-        } else {
-          console.warn(`Item con id "${itemId}" no encontrado en checklistItems`);
+          const wasCompleted = item.completed;
+          item.completed = checklistData[key]?.completed === true;
+          
+          if (!wasCompleted && item.completed) {
+            console.log(`✅ Item "${item.title}" completado`);
+          }
         }
-      } else {
-        console.warn(`Key "${key}" no tiene mapeo en mapeoChecklist`);
       }
     });
 
-    console.log('Checklist actualizado:', this.checklistItems);
+    this.checklistItems = [...this.checklistItems];
   }
 
-  async speakText(text: string) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'es-ES';
-    utterance.rate = 1;
-
-    this.isTalking = true; // activar movimiento de boca
-
-    utterance.onend = () => {
-      this.isTalking = false; // desactivar movimiento al terminar
-    };
-
-    speechSynthesis.speak(utterance);
-  }
-  async logout() {
+  async logout(): Promise<void> {
     await this.auth.logout();
   }
-
 }

@@ -1,10 +1,21 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+// src/app/features/therapy-session/components/conversation-display/conversation-display.component.ts
+
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subject, takeUntil, interval } from 'rxjs';
+import { checklistTerapeutico } from '../../interfaces/checklistTerapeutico.interface';
+import { DialogoService } from '../../services/dialogo';
+import { ChecklistSidebar } from '../checklist-sidebar/checklist-sidebar';
 
 export interface Message {
   id: string;
@@ -15,39 +26,303 @@ export interface Message {
 
 @Component({
   selector: 'app-conversation-display',
+  standalone: true,
+  templateUrl: './conversation-display.html',
+  styleUrls: ['./conversation-display.css'],
+  animations: [
+    trigger('messageAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ],
   imports: [
     CommonModule,
     FormsModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    MatIconModule
-  ],
-  templateUrl: './conversation-display.html',
-  styleUrl: './conversation-display.css'
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatTooltipModule,
+    ChecklistSidebar
+  ]
 })
-export class ConversationDisplay {
+export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy {
+  
+  @ViewChild('messagesArea') private messagesArea!: ElementRef;
+  
   @Input() messages: Message[] = [];
   @Output() sendMessage = new EventEmitter<string>();
-  @Output() submitSession = new EventEmitter<void>();
-
+  
   therapistMessage: string = '';
+  isLoading: boolean = false;
+  isSending: boolean = false;
+  
+  checklistActual: checklistTerapeutico | null = null;
+  tiempoTranscurrido: number = 0;
+  tiempoRestante: number = 60;
+  numeroSesion: number = 1;
+  
+  private destroy$ = new Subject<void>();
+  private shouldScroll = false;
+  private timerSubscription: any;
 
-  onKeyDown(event: KeyboardEvent) {
-    if (event.ctrlKey && event.key === 'Enter') {
-      event.preventDefault();
-      this.onSendMessage();
+  constructor(
+    private dialogoService: DialogoService,
+    private snackBar: MatSnackBar
+  ) {}
+
+  ngOnInit(): void {
+    this.inicializarSesion();
+    this.suscribirseAChecklist();
+    this.suscribirseAEstadoSesion();
+    this.iniciarTimer();
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.shouldScroll) {
+      this.scrollToBottom();
+      this.shouldScroll = false;
     }
   }
 
-  onSendMessage() {
-    if (this.therapistMessage.trim()) {
-      this.sendMessage.emit(this.therapistMessage);
-      this.therapistMessage = '';
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
     }
   }
 
-  onSubmitSession() {
-    this.submitSession.emit();
+  private inicializarSesion(): void {
+    this.isLoading = true;
+    
+    this.dialogoService.verificarSessionActiva()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (estado) => {
+          if (estado.tiene_sesion_activa) {
+            this.numeroSesion = estado.numero_sesion || 1;
+            this.tiempoTranscurrido = estado.tiempo_transcurrido_minutos || 0;
+            this.tiempoRestante = estado.tiempo_restante_minutos || 60;
+            
+            this.snackBar.open(
+              `Sesión activa #${estado.numero_sesion} - ${estado.tiempo_restante_minutos} min restantes`,
+              'OK',
+              { duration: 3000 }
+            );
+            
+            if (estado.checklist_actual) {
+              this.checklistActual = estado.checklist_actual;
+            }
+          } else {
+            this.snackBar.open(
+              'Inicia una nueva sesión escribiendo tu primer mensaje',
+              'OK',
+              { duration: 3000 }
+            );
+          }
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error al verificar sesión:', error);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private iniciarTimer(): void {
+    this.timerSubscription = interval(60000)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.tiempoRestante > 0) {
+          this.tiempoRestante--;
+          this.tiempoTranscurrido++;
+          
+          if (this.tiempoRestante === 10) {
+            this.snackBar.open(
+              '⚠️ Quedan 10 minutos para finalizar la sesión',
+              'OK',
+              { duration: 5000 }
+            );
+          }
+          
+          if (this.tiempoRestante === 5) {
+            this.snackBar.open(
+              '⏰ Últimos 5 minutos de la sesión',
+              'OK',
+              { duration: 5000 }
+            );
+          }
+          
+          if (this.tiempoRestante === 0) {
+            this.snackBar.open(
+              '⏱️ Se acabó el tiempo. La sesión se finalizará automáticamente.',
+              'OK',
+              { duration: 7000 }
+            );
+            
+            setTimeout(() => this.verificarTimeout(), 2000);
+          }
+        }
+      });
+  }
+
+  private verificarTimeout(): void {
+    this.dialogoService.verificarSessionActiva()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (estado) => {
+          if (!estado.tiene_sesion_activa) {
+            this.messages = [];
+            this.checklistActual = null;
+            this.tiempoRestante = 0;
+          }
+        }
+      });
+  }
+
+  private suscribirseAChecklist(): void {
+    this.dialogoService.checklist$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(checklist => {
+        if (checklist) {
+          this.checklistActual = checklist;
+          
+          const progreso = this.dialogoService.getChecklistProgress(checklist);
+          console.log(`Progreso del checklist: ${progreso}%`);
+        }
+      });
+  }
+
+  private suscribirseAEstadoSesion(): void {
+    this.dialogoService.estadoSesion$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(estado => {
+        if (estado && estado.tiene_sesion_activa) {
+          this.tiempoTranscurrido = estado.tiempo_transcurrido_minutos || 0;
+          this.tiempoRestante = estado.tiempo_restante_minutos || 60;
+          this.numeroSesion = estado.numero_sesion || 1;
+        }
+      });
+  }
+
+  onSendMessage(): void {
+    if (!this.therapistMessage.trim() || this.isSending) {
+      return;
+    }
+
+    const messageText = this.therapistMessage.trim();
+    this.therapistMessage = '';
+    this.isSending = true;
+    this.shouldScroll = true;
+    
+    this.sendMessage.emit(messageText);
+    
+    setTimeout(() => {
+      this.isSending = false;
+    }, 500);
+  }
+
+  onSubmitSession(): void {
+    if (this.messages.length === 0) {
+      this.snackBar.open(
+        'No hay mensajes en la sesión',
+        'OK',
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    const itemsCompletados = this.getItemsCompletados();
+    const totalItems = this.getTotalItems();
+
+    const confirmacion = confirm(
+      '¿Estás seguro de que deseas finalizar la sesión?\n\n' +
+      'Esta acción guardará la sesión actual.\n' +
+      `Has completado ${itemsCompletados}/${totalItems} items del checklist.\n\n` +
+      '¿Continuar?'
+    );
+
+    if (!confirmacion) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.dialogoService.finalizarSesion()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (resultado) => {
+          this.snackBar.open(
+            `✅ Sesión #${this.numeroSesion} finalizada!\n` +
+            `Duración: ${resultado.duracion_minutos} minutos.\n` +
+            `Sesiones completadas: ${resultado.sesiones_completadas}/6`,
+            'OK',
+            { duration: 7000 }
+          );
+          
+          setTimeout(() => {
+            this.messages = [];
+            this.checklistActual = null;
+            this.tiempoRestante = 60;
+            this.tiempoTranscurrido = 0;
+            this.isLoading = false;
+          }, 2000);
+        },
+        error: (error) => {
+          console.error('Error al finalizar sesión:', error);
+          
+          const errorMsg = error.error?.detail || 'Error al finalizar la sesión';
+          this.snackBar.open(errorMsg, 'Cerrar', { duration: 5000 });
+          
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private scrollToBottom(): void {
+    try {
+      if (this.messagesArea) {
+        this.messagesArea.nativeElement.scrollTop = 
+          this.messagesArea.nativeElement.scrollHeight;
+      }
+    } catch (err) {
+      console.error('Error al hacer scroll:', err);
+    }
+  }
+
+  trackByMessageId(index: number, message: Message): string {
+    return message.id;
+  }
+
+  getChecklistProgress(): number {
+    return this.dialogoService.getChecklistProgress(this.checklistActual);
+  }
+
+  isChecklistCompleto(): boolean {
+    return this.dialogoService.isChecklistCompleto(this.checklistActual);
+  }
+
+  getItemsCompletados(): number {
+    if (!this.checklistActual) return 0;
+    return Object.values(this.checklistActual)
+      .filter(item => item.completed).length;
+  }
+
+  getTotalItems(): number {
+    if (!this.checklistActual) return 4;
+    return Object.keys(this.checklistActual).length;
+  }
+
+  formatTimestamp(date: Date): string {
+    return new Date(date).toLocaleTimeString('es-MX', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 }

@@ -1,0 +1,142 @@
+ 
+<div class="statistics-container">
+  <div class="header">
+    <h2>Mis Estadísticas</h2>
+    <button mat-icon-button (click)="cargarEstadisticas()" [disabled]="isLoading">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando estadísticas...</p>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="stats-grid" *ngIf="!isLoading && estadisticas">
+    <!-- Total de Sesiones -->
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon color="primary">event_note</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.total_sesiones }}</h3>
+          <p>Sesiones Totales</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Checklist Completos -->
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon color="accent">check_circle</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.sesion_checklist_completados }}</h3>
+          <p>Checklist Completos</p>
+          <mat-progress-bar 
+            mode="determinate" 
+            [value]="porcentajeChecklistCompleto"
+            color="accent">
+          </mat-progress-bar>
+          <span class="percentage">{{ porcentajeChecklistCompleto }}%</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Pacientes Completados -->
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon color="warn">people</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.pacientes_atendidos }}</h3>
+          <p>Pacientes Completados</p>
+          <small>(6 sesiones cada uno)</small>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tiempo Total -->
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ formatearTiempo(estadisticas.duracion_total_minutos) }}</h3>
+          <p>Tiempo Total de Práctica</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Promedio por Sesión -->
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>timer</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.promedio_duracion_minutos }}</h3>
+          <p>Promedio por Sesión</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Estado Actual -->
+    <mat-card class="stat-card full-width">
+      <mat-card-content>
+        <h4>Tu Progreso</h4>
+        <div class="progress-info">
+          <div class="progress-item">
+            <mat-icon>trending_up</mat-icon>
+            <div>
+              <strong>Efectividad:</strong>
+              <span>
+                {{ porcentajeChecklistCompleto }}% de tus sesiones completaron el checklist
+              </span>
+            </div>
+          </div>
+          
+          <div class="progress-item" *ngIf="estadisticas.pacientes_atendidos > 0">
+            <mat-icon>emoji_events</mat-icon>
+            <div>
+              <strong>Logro:</strong>
+              <span>
+                Has completado {{ estadisticas.pacientes_atendidos }} 
+                {{ estadisticas.pacientes_atendidos === 1 ? 'paciente' : 'pacientes' }}
+                ({{ estadisticas.pacientes_atendidos * 6 }} sesiones)
+              </span>
+            </div>
+          </div>
+
+          <div class="progress-item">
+            <mat-icon>insights</mat-icon>
+            <div>
+              <strong>Próximo Objetivo:</strong>
+              <span>
+                {{ estadisticas.pacientes_atendidos === 0 
+                  ? 'Completa tu primer ciclo de 6 sesiones' 
+                  : 'Continúa mejorando tu técnica terapéutica' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Sin datos -->
+  <div class="empty-state" *ngIf="!isLoading && estadisticas && estadisticas.total_sesiones === 0">
+    <mat-icon>insert_chart</mat-icon>
+    <h3>Aún no tienes sesiones</h3>
+    <p>Inicia tu primera sesión para comenzar a ver tus estadísticas</p>
+    <button mat-raised-button color="primary" routerLink="/dashboard">
+      Ir al Dashboard
+    </button>
+  </div>
+</div>

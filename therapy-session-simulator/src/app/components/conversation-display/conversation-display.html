@@ -1,35 +1,97 @@
+<!-- src/app/features/therapy-session/components/conversation-display/conversation-display.component.html -->
+
 <div class="conversation-container">
+  <!-- Header con información de sesión -->
+  <div class="session-header" *ngIf="numeroSesion">
+    <div class="session-info">
+      <mat-icon>event</mat-icon>
+      <span>Sesión #{{ numeroSesion }}</span>
+    </div>
+    
+    <div class="timer-info" *ngIf="tiempoRestante > 0">
+      <mat-icon [class.warning]="tiempoRestante <= 10">timer</mat-icon>
+      <span [class.warning]="tiempoRestante <= 10">
+        {{ tiempoRestante }} min restantes
+      </span>
+    </div>
+
+    <div class="checklist-progress" *ngIf="checklistActual">
+      <mat-icon [class.complete]="isChecklistCompleto()">checklist</mat-icon>
+      <span>
+        Checklist: {{ getItemsCompletados() }}/{{ getTotalItems() }}
+      </span>
+      <mat-progress-bar 
+        mode="determinate" 
+        [value]="getChecklistProgress()"
+        [color]="isChecklistCompleto() ? 'accent' : 'primary'">
+      </mat-progress-bar>
+    </div>
+  </div>
+
+  <!-- Área de mensajes -->
   <div class="messages-area" #messagesArea>
+    <!-- Indicador de carga inicial -->
+    <div class="loading-state" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Cargando sesión...</p>
+    </div>
+
+    <!-- Mensajes -->
     <div class="message"
          *ngFor="let message of messages"
          [class.patient-message]="message.sender === 'paciente'"
-         [class.therapist-message]="message.sender === 'terapeuta'">
+         [class.therapist-message]="message.sender === 'terapeuta'"
+         [@messageAnimation]>
       <div class="message-bubble">
         <div class="message-header">
-          <span class="sender-label">{{ message.sender === 'paciente' ? 'Paciente' : 'Tu (Terapeuta)' }}</span>
-          <span class="message-time">{{ message.timestamp | date:'shortTime' }}</span>
+          <span class="sender-label">
+            <mat-icon>{{ message.sender === 'paciente' ? 'person' : 'psychology' }}</mat-icon>
+            {{ message.sender === 'paciente' ? 'Paciente' : 'Tú (Terapeuta)' }}
+          </span>
+          <span class="message-time">{{ message.timestamp }}</span>
         </div>
         <div class="message-text">{{ message.text }}</div>
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="messages.length === 0">
+    <!-- Indicador de que el paciente está escribiendo -->
+    <div class="typing-indicator" *ngIf="isSending">
+      <div class="typing-bubble">
+        <span class="sender-label">
+          <mat-icon>person</mat-icon>
+          Paciente está escribiendo
+        </span>
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div class="empty-state" *ngIf="messages.length === 0 && !isLoading">
       <mat-icon>chat_bubble_outline</mat-icon>
-      <p>Inicia la sesión </p>
+      <h3>Inicia la sesión</h3>
+      <p>Escribe tu primer mensaje para comenzar la sesión terapéutica</p>
     </div>
   </div>
 
-  <div class="input-area">
+  <!-- Área de entrada -->
+  <div class="input-area" [class.disabled]="isLoading || isSending">
     <mat-form-field appearance="outline" class="message-input">
-      <mat-label>Your response as therapist...</mat-label>
+      <mat-label>Tu respuesta como terapeuta...</mat-label>
       <textarea
         matInput
         [(ngModel)]="therapistMessage"
         (keydown.control.enter)="onSendMessage()"
+        [disabled]="isLoading || isSending"
         rows="3"
-        placeholder="Type your therapeutic response here...">
+        placeholder="Escribe tu respuesta terapéutica aquí..."
+        maxlength="1000">
       </textarea>
-      <mat-hint>Press Ctrl+Enter to send</mat-hint>
+      <mat-hint align="start">Presiona Ctrl+Enter para enviar</mat-hint>
+      <mat-hint align="end">{{ therapistMessage.length }}/1000</mat-hint>
     </mat-form-field>
 
     <div class="action-buttons">
@@ -37,19 +99,22 @@
         mat-raised-button
         color="primary"
         (click)="onSendMessage()"
-        [disabled]="!therapistMessage.trim()">
-        <mat-icon>send</mat-icon>
-        Send Message
+        [disabled]="!therapistMessage.trim() || isLoading || isSending">
+        <mat-spinner diameter="20" *ngIf="isSending"></mat-spinner>
+        <mat-icon *ngIf="!isSending">send</mat-icon>
+        {{ isSending ? 'Enviando...' : 'Enviar Mensaje' }}
       </button>
 
       <button
         mat-raised-button
         color="accent"
         (click)="onSubmitSession()"
-        [disabled]="messages.length === 0">
+        [disabled]="messages.length === 0 || isLoading || isSending"
+        matTooltip="Finaliza la sesión y guarda el progreso">
         <mat-icon>check_circle</mat-icon>
-        Complete Session
+        Finalizar Sesión
       </button>
     </div>
   </div>
-</div>
+
+   
