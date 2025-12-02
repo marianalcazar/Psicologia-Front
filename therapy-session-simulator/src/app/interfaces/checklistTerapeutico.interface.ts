@@ -1,9 +1,8 @@
 import { checklistItem } from "./checklistItem.inteface";
 export interface checklistTerapeutico {
-'rapport-inicial': checklistItem;
-'pregunta-reflejada': checklistItem;
-'validacion': checklistItem;
-'objetivo-terapeutico': checklistItem;
-
-
+  'rapport-inicial': checklistItem;
+  'explora-motivo-consulta': checklistItem;
+  'pregunta-refleja': checklistItem;
+  'validacion': checklistItem;
+  'objetivo-terapeutico': checklistItem;
 }

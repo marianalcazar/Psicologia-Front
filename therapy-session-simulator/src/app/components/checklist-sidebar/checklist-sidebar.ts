@@ -25,17 +25,19 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   private checklistActual: checklistTerapeutico | null = null;
 
   private checklistLabels: { [key: string]: string } = {
-    'rapport': 'Rapport (Bienvenida)',
-    'pregunta_refleja': 'Pregunta Refleja',
-    'validacion': 'Validación',
-    'objetivo_terapeutico': 'Objetivo Terapéutico'
+    'rapport-inicial': 'Inicio / Rapport',
+    'explora-motivo-consulta': 'Explora Motivo de Consulta',
+    'pregunta-refleja': 'Reflejar',
+    'validacion': 'Validar',
+    'objetivo-terapeutico': 'Plantear Objetivo'
   };
 
   private checklistDescriptions: { [key: string]: string } = {
-    'rapport': 'Establecimiento de la conexión inicial con el paciente, creando un ambiente de confianza y comodidad para facilitar la comunicación terapéutica.',
-    'pregunta_refleja': 'Técnica que devuelve al paciente sus propias palabras o emociones expresadas, ayudándole a profundizar en su autoconocimiento y reflexión.',
-    'validacion': 'Reconocimiento y legitimación de las emociones y experiencias del paciente, transmitiendo que sus sentimientos son comprensibles y aceptables.',
-    'objetivo_terapeutico': 'Identificación y definición clara de las metas específicas que el paciente desea alcanzar durante el proceso terapéutico.'
+    'rapport-inicial': 'Establecer rapport, crear ambiente de confianza y comodidad. Mantener actitud profesional y acogedora.',
+    'explora-motivo-consulta': 'Explorar circunstancias, recursos, excepciones y consecuencias del motivo de consulta.',
+    'pregunta-refleja': 'Parafrasear y devolver palabras clave, hechos y emociones para que el consultante se sienta comprendido.',
+    'validacion': 'Normalizar y despatologizar las emociones. Expresar comprensión y aceptación.',
+    'objetivo-terapeutico': 'Plantear un objetivo relacionado con el motivo de consulta, comprensible y acordado con el consultante.'
   };
 
   constructor(
@@ -54,18 +56,24 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   }
 
   private inicializarChecklist(): void {
-    // Inicializar con items por defecto
+    // Inicializar con items por defecto para Primera Sesión Terapéutica
     this.checklistItems = [
       {
-        id: 'rapport',
-        title: this.checklistLabels['rapport'],
-        description: this.checklistDescriptions['rapport'],
+        id: 'rapport-inicial',
+        title: this.checklistLabels['rapport-inicial'],
+        description: this.checklistDescriptions['rapport-inicial'],
         completed: false
       },
       {
-        id: 'pregunta_refleja',
-        title: this.checklistLabels['pregunta_refleja'],
-        description: this.checklistDescriptions['pregunta_refleja'],
+        id: 'explora-motivo-consulta',
+        title: this.checklistLabels['explora-motivo-consulta'],
+        description: this.checklistDescriptions['explora-motivo-consulta'],
+        completed: false
+      },
+      {
+        id: 'pregunta-refleja',
+        title: this.checklistLabels['pregunta-refleja'],
+        description: this.checklistDescriptions['pregunta-refleja'],
         completed: false
       },
       {
@@ -75,9 +83,9 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
         completed: false
       },
       {
-        id: 'objetivo_terapeutico',
-        title: this.checklistLabels['objetivo_terapeutico'],
-        description: this.checklistDescriptions['objetivo_terapeutico'],
+        id: 'objetivo-terapeutico',
+        title: this.checklistLabels['objetivo-terapeutico'],
+        description: this.checklistDescriptions['objetivo-terapeutico'],
         completed: false
       }
     ];
