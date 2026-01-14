@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -7,13 +7,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DialogoService } from '../../services/dialogo';
 import { ResumenPaciente } from '../../interfaces/resumenpaciente.interface';
+import { ResumenPacienteExtendido } from '../../interfaces/ResumenPacienteExtendido.interface';
 
 @Component({
   selector: 'app-patient-profile',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatCardModule, 
+    CommonModule,
+    MatCardModule,
     MatChipsModule,
     MatProgressSpinnerModule,
     MatButtonModule,
@@ -23,27 +24,35 @@ import { ResumenPaciente } from '../../interfaces/resumenpaciente.interface';
   styleUrl: './patient-profile.css'
 })
 export class PatientProfile implements OnInit {
-  patient: ResumenPaciente | null = null;
+  @Output() pacienteChange = new EventEmitter<ResumenPacienteExtendido>();
+  patient: ResumenPacienteExtendido | null = null;
   isLoading: boolean = false;
   error: string | null = null;
   pacienteInicializado: boolean = false;
 
-  constructor(private dialogo: DialogoService) {}
+
+  constructor(private dialogo: DialogoService) { }
 
   ngOnInit() {
     this.inicializarPaciente();
   }
 
- inicializarPaciente() {
+  inicializarPaciente() {
     this.isLoading = true;
     this.error = null;
 
     this.dialogo.inicializarPaciente().subscribe({
-      next: (resumen: ResumenPaciente) => {
-        console.log('Paciente inicializado:', resumen);
-        this.patient = resumen;
+      next: (resumen) => {
+        this.patient = {
+          nombre: resumen.nombre,
+          edad: resumen.edad,
+          imagen: resumen.imagen,
+          numeroSesion: resumen.numeroSesion
+        };
+
         this.pacienteInicializado = true;
         this.isLoading = false;
+        this.pacienteChange.emit(this.patient);
       },
       error: (error) => {
         console.error('Error al inicializar paciente:', error);
@@ -55,7 +64,6 @@ export class PatientProfile implements OnInit {
   }
   obtenerResumen() {
     if (!this.pacienteInicializado) {
-      // Si no hay paciente inicializado, inicializar primero
       this.inicializarPaciente();
       return;
     }
@@ -71,7 +79,7 @@ export class PatientProfile implements OnInit {
       },
       error: (error) => {
         console.error('Error al obtener resumen:', error);
-        
+
         // Si el error es 404, probablemente no hay paciente asignado
         if (error.status === 404) {
           this.error = 'No hay paciente asignado. Inicializando...';
@@ -81,7 +89,7 @@ export class PatientProfile implements OnInit {
         } else {
           this.error = 'Error al cargar información del paciente.';
         }
-        
+
         this.isLoading = false;
       }
     });

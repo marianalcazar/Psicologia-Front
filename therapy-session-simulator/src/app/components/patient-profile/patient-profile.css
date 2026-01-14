@@ -1,18 +1,21 @@
 .patient-card {
-  margin: 20px;
-  background: white;
-  border-radius: 12px;
+  margin: 10px;
+  background: rgb(255, 255, 255);
+  border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-top: 0px;
 }
 
 .patient-header {
   display: flex;
   align-items: center;
   gap: 16px;
+  margin-left: 50px;
 }
 
 .patient-icon {
   flex-shrink: 0;
+  margin-top: 30px;
 }
 
 .patient-info h2 {
@@ -20,6 +23,8 @@
   font-size: 24px;
   font-weight: 600;
   color: #1976d2;
+  align-items: center;
+
 }
 
 .session-number {
@@ -64,11 +69,16 @@ mat-chip {
   background-color: #e3f2fd;
   color: #1976d2;
 }
+
 .patient-avatar {
-  width: 60px;          /* ancho fijo */
-  height: 60px;         /* alto fijo */
-  border-radius: 50%;   /* opcional: para hacerla circular */
-  object-fit: cover;    /* mantiene proporción, recorta si es necesario */
+  width: 200px;
+  /* ancho fijo */
+  height: 200px;
+  /* alto fijo */
+  border-radius: 50%;
+  /* opcional: para hacerla circular */
+  object-fit: cover;
+  /* mantiene proporción, recorta si es necesario */
 }
 
 .goals-list {
@@ -100,4 +110,22 @@ mat-chip {
   text-align: center;
   color: #999;
   font-style: italic;
+}
+
+.patient-info-display {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1771cc;
+  margin-left: 50px;
+  margin-bottom: 245px;
+
+}
+
+.patient-age-display {
+  margin: 0;
+  font-size: 18px;
+  color: #6f6b6b;
+  font-weight: 500;
+  margin-left: 35px;
 }

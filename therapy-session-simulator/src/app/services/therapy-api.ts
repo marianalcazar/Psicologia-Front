@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, delay } from 'rxjs';
- 
+
 import { Message } from '../components/conversation-display/conversation-display';
 import { ResumenPaciente } from '../interfaces/resumenpaciente.interface';
 
@@ -11,24 +11,18 @@ import { ResumenPaciente } from '../interfaces/resumenpaciente.interface';
 export class TherapyApi {
   private apiUrl = '/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
- /* getPatientData(patientId: string): Observable<ResumenPaciente> {
-    return this.http.get<ResumenPaciente>(`${this.apiUrl}/patient/${patientId}`);
-  }*/
+  /* getPatientData(patientId: string): Observable<ResumenPaciente> {
+     return this.http.get<ResumenPaciente>(`${this.apiUrl}/patient/${patientId}`);
+   }*/
 
   getPatientDataMock(): Observable<ResumenPaciente> {
     const mockPatient: ResumenPaciente = {
       nombre: 'John Smith',
-      image:'',
-      edad: 35,
-      MAIN_CONCERNS: ['Work stress', 'Boundary setting', 'Anxiety'],
-      
-      TREATMENT_GOALS: [
-        'Learn to set healthy boundaries at work',
-        'Develop coping strategies for anxiety',
-        'Improve work-life balance'
-      ],
+      imagen: '',
+      edad: '35 años',
+
     };
 
     return of(mockPatient).pipe(delay(500));

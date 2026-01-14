@@ -3,8 +3,8 @@
 .conversation-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  max-height: calc(100vh - 200px);
+  height: 500%;
+  max-height: 598px;
   background: #f5f5f5;
   border-radius: 8px;
   overflow: hidden;
@@ -17,7 +17,7 @@
   gap: 20px;
   padding: 12px 20px;
   background: white;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #171616;
   flex-wrap: wrap;
 
   .session-info,
@@ -340,6 +340,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -350,27 +351,32 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
 
 @keyframes bounce {
+
   0%,
   80%,
   100% {
     transform: scale(0);
   }
+
   40% {
     transform: scale(1);
   }
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }

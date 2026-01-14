@@ -1,6 +1,6 @@
 // src/app/features/therapy-session/components/conversation-display/conversation-display.component.ts
 
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -50,22 +50,22 @@ export interface Message {
     ChecklistSidebar
   ]
 })
-export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy {
-  
+export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy, OnChanges {
+
   @ViewChild('messagesArea') private messagesArea!: ElementRef;
-  
+
   @Input() messages: Message[] = [];
   @Output() sendMessage = new EventEmitter<string>();
-  
+  @Input() numeroSesion: number = 1;
+  @Input() paciente: any;
   therapistMessage: string = '';
   isLoading: boolean = false;
   isSending: boolean = false;
-  
+
   checklistActual: checklistTerapeutico | null = null;
   tiempoTranscurrido: number = 0;
-  tiempoRestante: number = 60;
-  numeroSesion: number = 1;
-  
+  tiempoRestante: number = 30;
+
   private destroy$ = new Subject<void>();
   private shouldScroll = false;
   private timerSubscription: any;
@@ -73,7 +73,14 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
   constructor(
     private dialogoService: DialogoService,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
+
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['paciente']?.currentValue) {
+      this.numeroSesion = changes['paciente'].currentValue.numeroSesion;
+    }
+  }
 
   ngOnInit(): void {
     this.inicializarSesion();
@@ -92,30 +99,30 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    
+
     if (this.timerSubscription) {
       this.timerSubscription.unsubscribe();
     }
   }
 
-  private inicializarSesion(): void {
+
+  private inicializarSesion(sesion?: any): void {
     this.isLoading = true;
-    
+
     this.dialogoService.verificarSessionActiva()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (estado) => {
           if (estado.tiene_sesion_activa) {
-            this.numeroSesion = estado.numero_sesion || 1;
             this.tiempoTranscurrido = estado.tiempo_transcurrido_minutos || 0;
             this.tiempoRestante = estado.tiempo_restante_minutos || 60;
-            
+            this.numeroSesion = sesion;
             this.snackBar.open(
               `Sesión activa #${estado.numero_sesion} - ${estado.tiempo_restante_minutos} min restantes`,
               'OK',
               { duration: 3000 }
             );
-            
+
             if (estado.checklist_actual) {
               this.checklistActual = estado.checklist_actual;
             }
@@ -142,7 +149,7 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
         if (this.tiempoRestante > 0) {
           this.tiempoRestante--;
           this.tiempoTranscurrido++;
-          
+
           if (this.tiempoRestante === 10) {
             this.snackBar.open(
               '⚠️ Quedan 10 minutos para finalizar la sesión',
@@ -150,7 +157,7 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
               { duration: 5000 }
             );
           }
-          
+
           if (this.tiempoRestante === 5) {
             this.snackBar.open(
               '⏰ Últimos 5 minutos de la sesión',
@@ -158,14 +165,14 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
               { duration: 5000 }
             );
           }
-          
+
           if (this.tiempoRestante === 0) {
             this.snackBar.open(
               '⏱️ Se acabó el tiempo. La sesión se finalizará automáticamente.',
               'OK',
               { duration: 7000 }
             );
-            
+
             setTimeout(() => this.verificarTimeout(), 2000);
           }
         }
@@ -192,7 +199,7 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
       .subscribe(checklist => {
         if (checklist) {
           this.checklistActual = checklist;
-          
+
           const progreso = this.dialogoService.getChecklistProgress(checklist);
           console.log(`Progreso del checklist: ${progreso}%`);
         }
@@ -206,7 +213,6 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
         if (estado && estado.tiene_sesion_activa) {
           this.tiempoTranscurrido = estado.tiempo_transcurrido_minutos || 0;
           this.tiempoRestante = estado.tiempo_restante_minutos || 60;
-          this.numeroSesion = estado.numero_sesion || 1;
         }
       });
   }
@@ -220,9 +226,9 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
     this.therapistMessage = '';
     this.isSending = true;
     this.shouldScroll = true;
-    
+
     this.sendMessage.emit(messageText);
-    
+
     setTimeout(() => {
       this.isSending = false;
     }, 500);
@@ -265,7 +271,7 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
             'OK',
             { duration: 7000 }
           );
-          
+
           setTimeout(() => {
             this.messages = [];
             this.checklistActual = null;
@@ -276,10 +282,10 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
         },
         error: (error) => {
           console.error('Error al finalizar sesión:', error);
-          
+
           const errorMsg = error.error?.detail || 'Error al finalizar la sesión';
           this.snackBar.open(errorMsg, 'Cerrar', { duration: 5000 });
-          
+
           this.isLoading = false;
         }
       });
@@ -288,7 +294,7 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy 
   private scrollToBottom(): void {
     try {
       if (this.messagesArea) {
-        this.messagesArea.nativeElement.scrollTop = 
+        this.messagesArea.nativeElement.scrollTop =
           this.messagesArea.nativeElement.scrollHeight;
       }
     } catch (err) {

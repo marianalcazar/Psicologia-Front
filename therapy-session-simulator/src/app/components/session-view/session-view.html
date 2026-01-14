@@ -4,8 +4,8 @@
   <header class="session-header">
     <div class="header-content">
       <div class="header-text">
-        <h1>Therapy Session Simulator</h1>
-        <p class="subtitle">Practice your therapeutic skills with AI-powered patient responses</p>
+        <h1>Simulador de sesión de terapia</h1>
+        <p class="subtitle">Practique sus habilidades terapéuticas con respuestas de pacientes impulsadas por IA</p>
       </div>
       <button class="logout-btn" (click)="logout()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -21,16 +21,15 @@
 
   <div class="session-content">
     <aside class="left-panel">
-      <app-patient-profile></app-patient-profile>
+      <app-patient-profile (pacienteChange)="onPacienteChange($event)">
+      </app-patient-profile>
     </aside>
 
-    <app-conversation-display
-      [messages]="messages"
-      (sendMessage)="onSendMessage($event)">
+    <app-conversation-display [messages]="messages" [paciente]="pacienteActual" (sendMessage)="onSendMessage($event)">
     </app-conversation-display>
 
     <aside class="right-panel">
-      <app-checklist-sidebar ></app-checklist-sidebar>
+      <app-checklist-sidebar></app-checklist-sidebar>
     </aside>
   </div>
 
