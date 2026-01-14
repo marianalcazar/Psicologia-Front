@@ -29,7 +29,7 @@ export class DialogoService {
   constructor(
     private http: HttpClient,
     private auth: AuthService
-  ) { 
+  ) {
     this.verificarSessionActiva().subscribe({
       next: () => console.log('Sesión verificada al iniciar servicio'),
       error: (err) => console.warn('No hay sesión activa:', err)
@@ -56,15 +56,15 @@ export class DialogoService {
 
   inicializarPaciente(): Observable<ResumenPacienteExtendido> {
     return this.getHeaders().pipe(
-      switchMap(headers => 
-        this.http.post<ResumenPacienteExtendido>(
+      switchMap(headers =>
+        this.http.post<string>(
           `${this.apiUrl}/paciente/inicializar`,
           {},
           { headers }
         )
       ),
-      tap(resumen => {
-        console.log('✅ Paciente inicializado:', resumen);
+      map(resumenStr => JSON.parse(resumenStr) as ResumenPacienteExtendido),
+      tap(() => {
         this.verificarSessionActiva().subscribe();
       }),
       catchError(error => {
@@ -74,9 +74,10 @@ export class DialogoService {
     );
   }
 
+
   obtenerResumenPaciente(): Observable<ResumenPacienteExtendido> {
     return this.getHeaders().pipe(
-      switchMap(headers => 
+      switchMap(headers =>
         this.http.get<ResumenPacienteExtendido>(
           `${this.apiUrl}/paciente/resumen`,
           { headers }
@@ -95,27 +96,22 @@ export class DialogoService {
       return throwError(() => new Error('El mensaje no puede estar vacío'));
     }
 
-    const params = new HttpParams().set('user_input', userInput.trim());
+    const datos = {
+      user_input: userInput.trim()
+    };
+
 
     return this.getHeaders().pipe(
       switchMap(headers =>
         this.http.post<DialogoResponse>(
           `${this.apiUrl}/enviar_mensaje`,
-          {},
-          { headers, params }
+          datos,
+          { headers }
         )
       ),
       tap(response => {
         console.log('💬 Respuesta recibida:', response);
-        
-        if (response.checklist_terapeutico) {
-          this.checklistSubject.next(response.checklist_terapeutico);
-        }
-        
-        if (response.sesionCompletada) {
-          console.log('🎉 ¡Sesión completada! Checklist completo');
-          this.verificarSessionActiva().subscribe();
-        }
+
       }),
       catchError(error => {
         console.error('❌ Error al enviar mensaje:', error);
@@ -127,7 +123,7 @@ export class DialogoService {
 
   verificarSessionActiva(): Observable<EstadoSesion> {
     return this.getHeaders().pipe(
-      switchMap(headers => 
+      switchMap(headers =>
         this.http.get<EstadoSesion>(
           `${this.apiUrl}/sesion/estado`,
           { headers }
@@ -135,11 +131,11 @@ export class DialogoService {
       ),
       tap(estado => {
         this.estadoSesionActual.next(estado);
-        
+
         if (estado.tiene_sesion_activa && estado.checklist_actual) {
           this.checklistSubject.next(estado.checklist_actual);
         }
-        
+
         console.log('🔍 Estado de sesión:', {
           activa: estado.tiene_sesion_activa,
           numero: estado.numero_sesion,
@@ -148,13 +144,13 @@ export class DialogoService {
       }),
       catchError(error => {
         console.warn('⚠️ Error al verificar sesión:', error);
-        
+
         const estadoVacio: EstadoSesion = {
           tiene_sesion_activa: false,
           mensaje: 'No hay sesión activa'
         };
         this.estadoSesionActual.next(estadoVacio);
-        
+
         return throwError(() => error);
       })
     );
@@ -162,7 +158,7 @@ export class DialogoService {
 
   finalizarSesion(): Observable<FinalizarSesion> {
     return this.getHeaders().pipe(
-      switchMap(headers => 
+      switchMap(headers =>
         this.http.post<FinalizarSesion>(
           `${this.apiUrl}/sesion/finalizar`,
           {},
@@ -171,7 +167,7 @@ export class DialogoService {
       ),
       tap(resultado => {
         console.log('✅ Sesión finalizada:', resultado);
-        
+
         this.checklistSubject.next(null);
         this.estadoSesionActual.next({
           tiene_sesion_activa: false,
@@ -188,7 +184,7 @@ export class DialogoService {
 
   obtenerEstadisticas(): Observable<Estadisticainterface> {
     return this.getHeaders().pipe(
-      switchMap(headers => 
+      switchMap(headers =>
         this.http.get<Estadisticainterface>(
           `${this.apiUrl}/estadisticas`,
           { headers }
@@ -209,10 +205,10 @@ export class DialogoService {
 
   getChecklistProgress(checklist: checklistTerapeutico | null): number {
     if (!checklist) return 0;
-    
+
     const items = Object.values(checklist);
     if (items.length === 0) return 0;
-    
+
     const completados = items.filter(item => item.completed).length;
     return Math.round((completados / items.length) * 100);
   }

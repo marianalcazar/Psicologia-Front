@@ -24,8 +24,10 @@ import { DialogoService } from '../../services/dialogo';
   styleUrls: ['./session-view.css']
 })
 export class SessionView implements OnInit, OnDestroy {
-  
+
+
   messages: Message[] = [];
+  pacienteActual: any = null;
   checklistItems: ChecklistItem[] = [
     {
       id: 'rapport',
@@ -52,10 +54,10 @@ export class SessionView implements OnInit, OnDestroy {
       completed: false
     }
   ];
-  
+
   isLoading: boolean = false;
   isSending: boolean = false;
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -63,7 +65,7 @@ export class SessionView implements OnInit, OnDestroy {
     private auth: AuthService,
     private dialogoService: DialogoService,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadPatientData();
@@ -77,7 +79,7 @@ export class SessionView implements OnInit, OnDestroy {
 
   async loadPatientData(): Promise<void> {
     this.isLoading = true;
-    
+
     try {
       const token = await this.auth.getToken();
       console.log("Token en session view: " + token);
@@ -193,7 +195,7 @@ export class SessionView implements OnInit, OnDestroy {
         if (item) {
           const wasCompleted = item.completed;
           item.completed = checklistData[key]?.completed === true;
-          
+
           if (!wasCompleted && item.completed) {
             console.log(`✅ Item "${item.title}" completado`);
           }
@@ -207,4 +209,9 @@ export class SessionView implements OnInit, OnDestroy {
   async logout(): Promise<void> {
     await this.auth.logout();
   }
+
+  onPacienteChange(paciente: any) {
+    this.pacienteActual = paciente;
+  }
+
 }
