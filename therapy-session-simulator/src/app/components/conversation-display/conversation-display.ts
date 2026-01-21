@@ -65,7 +65,7 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
 
   checklistActual: checklistTerapeutico | null = null;
   tiempoTranscurrido: number = 0;
-  tiempoRestante: number = 1;
+  tiempoRestante: number = 60;
 
   private destroy$ = new Subject<void>();
   private shouldScroll = false;
