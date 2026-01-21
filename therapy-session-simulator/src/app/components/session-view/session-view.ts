@@ -28,6 +28,7 @@ export class SessionView implements OnInit, OnDestroy {
 
   messages: Message[] = [];
   pacienteActual: any = null;
+  checklistSesion: any = null;
   checklistItems: ChecklistItem[] = [
     {
       id: 'rapport',
@@ -133,8 +134,10 @@ export class SessionView implements OnInit, OnDestroy {
     this.dialogoService.enviarMensaje(textoRespuesta.trim())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
+
         next: (response) => {
           console.log('Respuesta completa del backend:', response);
+          this.checklistSesion = response.checklist_evaluado
 
           const pacienteMensaje: Message = {
             id: (Date.now() + 1).toString(),
@@ -145,8 +148,8 @@ export class SessionView implements OnInit, OnDestroy {
 
           this.messages = [...this.messages, pacienteMensaje];
 
-          if (response.checklist_terapeutico) {
-            this.actualizarChecklist(response.checklist_terapeutico);
+          if (response.checklist_evaluado) {
+            this.actualizarChecklist(response.checklist_evaluado);
           }
 
           if (response.sesionCompletada) {
