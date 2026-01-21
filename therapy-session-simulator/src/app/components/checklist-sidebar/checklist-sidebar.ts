@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, takeUntil } from 'rxjs';
 import { DialogoService } from '../../services/dialogo';
 import { checklistTerapeutico } from '../../interfaces/checklistTerapeutico.interface';
+
 
 export interface ChecklistItem {
   id: string;
@@ -23,6 +24,7 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   checklistItems: ChecklistItem[] = [];
   private destroy$ = new Subject<void>();
   private checklistActual: checklistTerapeutico | null = null;
+  @Input() checklistSesion: any = null;
 
   private checklistLabels: { [key: string]: string } = {
     'rapport': 'Rapport (Bienvenida)',
@@ -41,11 +43,10 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   constructor(
     private dialogoService: DialogoService,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.inicializarChecklist();
-    this.suscribirseAChecklist();
   }
 
   ngOnDestroy(): void {
@@ -53,8 +54,15 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes) {
+      this.actualizarChecklist(this.checklistSesion);
+    }
+
+  }
+
   private inicializarChecklist(): void {
-    // Inicializar con items por defecto
+
     this.checklistItems = [
       {
         id: 'rapport',
@@ -82,58 +90,8 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
       }
     ];
 
-    // Verificar si hay una sesión activa con checklist
-    this.dialogoService.verificarSessionActiva()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (estado) => {
-          if (estado.tiene_sesion_activa && estado.checklist_actual) {
-            this.checklistActual = estado.checklist_actual;
-            this.convertirChecklistAItems(estado.checklist_actual);
-          }
-        },
-        error: (error) => {
-          console.error('Error al verificar sesión:', error);
-        }
-      });
   }
 
-  private suscribirseAChecklist(): void {
-    this.dialogoService.checklist$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(checklist => {
-        if (checklist) {
-          const checklistAnterior = this.checklistActual;
-          this.checklistActual = checklist;
-          
-          // Convertir al formato de items
-          this.convertirChecklistAItems(checklist);
-          
-          // Mostrar notificaciones cuando se complete un item
-          if (checklistAnterior) {
-            Object.entries(checklist).forEach(([key, item]) => {
-              const itemAnterior = checklistAnterior[key as keyof checklistTerapeutico];
-              if (!itemAnterior?.completed && item.completed) {
-                this.snackBar.open(
-                  `✅ ${this.checklistLabels[key]} completado!`,
-                  'OK',
-                  { duration: 3000 }
-                );
-              }
-            });
-          }
-        }
-      });
-  }
-
-  private convertirChecklistAItems(checklist: checklistTerapeutico): void {
-    this.checklistItems = Object.entries(checklist).map(([key, item]) => ({
-      id: key,
-      title: this.checklistLabels[key] || key,
-      description: this.checklistDescriptions[key] || '',
-      completed: item.completed
-    }));
-  }
 
   getCompletedCount(): number {
     return this.checklistItems.filter(item => item.completed).length;
@@ -142,5 +100,14 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   getCompletionPercentage(): number {
     if (this.checklistItems.length === 0) return 0;
     return (this.getCompletedCount() / this.checklistItems.length) * 100;
+  }
+
+  actualizarChecklist(checklist: any): void {
+    this.checklistItems = this.checklistItems.map(item => ({
+      ...item,
+      completed: checklist[item.id]?.estatus ?? item.completed
+    }));
+
+
   }
 }

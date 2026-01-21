@@ -30,10 +30,7 @@ export class DialogoService {
     private http: HttpClient,
     private auth: AuthService
   ) {
-    this.verificarSessionActiva().subscribe({
-      next: () => console.log('Sesión verificada al iniciar servicio'),
-      error: (err) => console.warn('No hay sesión activa:', err)
-    });
+
   }
 
   private getHeaders(): Observable<HttpHeaders> {
@@ -65,7 +62,6 @@ export class DialogoService {
       ),
       map(resumenStr => JSON.parse(resumenStr) as ResumenPacienteExtendido),
       tap(() => {
-        this.verificarSessionActiva().subscribe();
       }),
       catchError(error => {
         console.error('❌ Error al inicializar paciente:', error);
@@ -121,101 +117,9 @@ export class DialogoService {
     );
   }
 
-  verificarSessionActiva(): Observable<EstadoSesion> {
-    return this.getHeaders().pipe(
-      switchMap(headers =>
-        this.http.get<EstadoSesion>(
-          `${this.apiUrl}/sesion/estado`,
-          { headers }
-        )
-      ),
-      tap(estado => {
-        this.estadoSesionActual.next(estado);
-
-        if (estado.tiene_sesion_activa && estado.checklist_actual) {
-          this.checklistSubject.next(estado.checklist_actual);
-        }
-
-        console.log('🔍 Estado de sesión:', {
-          activa: estado.tiene_sesion_activa,
-          numero: estado.numero_sesion,
-          tiempo_restante: estado.tiempo_restante_minutos
-        });
-      }),
-      catchError(error => {
-        console.warn('⚠️ Error al verificar sesión:', error);
-
-        const estadoVacio: EstadoSesion = {
-          tiene_sesion_activa: false,
-          mensaje: 'No hay sesión activa'
-        };
-        this.estadoSesionActual.next(estadoVacio);
-
-        return throwError(() => error);
-      })
-    );
-  }
-
-  finalizarSesion(): Observable<FinalizarSesion> {
-    return this.getHeaders().pipe(
-      switchMap(headers =>
-        this.http.post<FinalizarSesion>(
-          `${this.apiUrl}/sesion/finalizar`,
-          {},
-          { headers }
-        )
-      ),
-      tap(resultado => {
-        console.log('✅ Sesión finalizada:', resultado);
-
-        this.checklistSubject.next(null);
-        this.estadoSesionActual.next({
-          tiene_sesion_activa: false,
-          mensaje: 'Sesión finalizada'
-        });
-      }),
-      catchError(error => {
-        console.error('❌ Error al finalizar sesión:', error);
-        const errorMsg = error.error?.detail || 'No se pudo finalizar la sesión';
-        return throwError(() => new Error(errorMsg));
-      })
-    );
-  }
-
-  obtenerEstadisticas(): Observable<Estadisticainterface> {
-    return this.getHeaders().pipe(
-      switchMap(headers =>
-        this.http.get<Estadisticainterface>(
-          `${this.apiUrl}/estadisticas`,
-          { headers }
-        )
-      ),
-      tap(stats => console.log('📊 Estadísticas:', stats)),
-      catchError(error => {
-        console.error('❌ Error al obtener estadísticas:', error);
-        return throwError(() => new Error('No se pudieron obtener las estadísticas'));
-      })
-    );
-  }
-
   isChecklistCompleto(checklist: checklistTerapeutico | null): boolean {
     if (!checklist) return false;
     return Object.values(checklist).every(item => item.completed);
   }
 
-  getChecklistProgress(checklist: checklistTerapeutico | null): number {
-    if (!checklist) return 0;
-
-    const items = Object.values(checklist);
-    if (items.length === 0) return 0;
-
-    const completados = items.filter(item => item.completed).length;
-    return Math.round((completados / items.length) * 100);
-  }
-
-  resetearEstado(): void {
-    this.checklistSubject.next(null);
-    this.estadoSesionActual.next(null);
-    console.log('🔄 Estado del servicio reseteado');
-  }
 }
