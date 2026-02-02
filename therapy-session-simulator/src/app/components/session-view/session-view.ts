@@ -58,6 +58,8 @@ export class SessionView implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
   isSending: boolean = false;
+  mostrarTerminos = false;
+
 
   private destroy$ = new Subject<void>();
 
@@ -69,6 +71,8 @@ export class SessionView implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    const aceptado = localStorage.getItem('disclaimerAceptado');
+    this.mostrarTerminos = true;
     this.loadPatientData();
     this.suscribirseAChecklist();
   }
@@ -216,5 +220,13 @@ export class SessionView implements OnInit, OnDestroy {
   onPacienteChange(paciente: any) {
     this.pacienteActual = paciente;
   }
+
+  aceptarTerminos(): void {
+    localStorage.setItem('disclaimerAceptado', 'true');
+    this.mostrarTerminos = false;
+  }
+
+
+
 
 }

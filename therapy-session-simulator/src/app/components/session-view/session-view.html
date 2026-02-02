@@ -1,21 +1,30 @@
 <!-- src/app/features/therapy-session/therapy-session.component.html -->
 <div class="session-container">
 
+  <div class="overlay-global" *ngIf="mostrarTerminos">
+    <div class="modal-global">
+      <h2 style="text-align: center; margin: 0;">Aviso de Privacidad y Uso Educativo</h2>
+      <p>
+        Esta aplicación es un simulador educativo de psicología. Los datos que ingreses (como nombre, correo y mensajes)
+        se utilizan únicamente con fines educativos y para el funcionamiento de la experiencia.
+
+        Tu información será tratada de forma confidencial y responsable, y no será compartida con terceros. Esta
+        herramienta no reemplaza terapia psicológica real ni ofrece diagnósticos clínicos.
+
+        Al continuar, aceptas estas condiciones.
+      </p>
+
+      <button style="display: block; margin: 12px auto;" (click)="aceptarTerminos()">Aceptar</button>
+    </div>
+  </div>
+
+
   <header class="session-header">
     <div class="header-content">
       <div class="header-text">
         <h1>Simulador de sesión de terapia</h1>
         <p class="subtitle">Practique sus habilidades terapéuticas con respuestas de pacientes impulsadas por IA</p>
       </div>
-      <button class="logout-btn" (click)="logout()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-        Cerrar Sesión
-      </button>
     </div>
   </header>
 
