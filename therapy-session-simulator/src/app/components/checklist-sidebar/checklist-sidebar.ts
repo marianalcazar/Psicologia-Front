@@ -36,12 +36,12 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   };
 
   private checklistDescriptions: { [key: string]: string } = {
-    'rapport': 'Establecimiento de la conexión inicial con el paciente, creando un ambiente de confianza y comodidad para facilitar la comunicación terapéutica.',
-    'pregunta_refleja': 'Técnica que devuelve al paciente sus propias palabras o emociones expresadas, ayudándole a profundizar en su autoconocimiento y reflexión.',
-    'validacion': 'Reconocimiento y legitimación de las emociones y experiencias del paciente, transmitiendo que sus sentimientos son comprensibles y aceptables.',
-    'objetivo_terapeutico': 'Identificación y definición clara de las metas específicas que el paciente desea alcanzar durante el proceso terapéutico.',
-    'genograma': 'Herramienta gráfica que permite representar la estructura familiar y las relaciones entre sus miembros a lo largo de varias generaciones.',
-    'cierre_sesion': 'Conclusión de la sesión terapéutica, preguntando al paciente sobre su experiencia y cómo se sintió durante la sesión.'
+    'rapport': 'Tips: “Gracias por venir. ¿Cómo te sientes hoy?”,“¿Qué te gustaría platicar hoy?” “Vamos con calma, a tu ritmo.”',
+    'pregunta_refleja': 'Tips: “A ver si entendí… ¿te pasó ___?”, “Entonces te sentiste ___, ¿sí?” repite con tus palabras y confirma.',
+    'validacion': 'Tips: “Es normal que te sientas así.”, “Con lo que viviste, sí está pesado.”, acompaña, no minimices.',
+    'objetivo_terapeutico': 'Tips: “¿Qué te gustaría que cambiara con la terapia?”, “Si esto mejora, ¿qué sería diferente en tu día a día?”, objetivo simple y aterrizado.',
+    'genograma': 'Tips:  “¿Con quién vives ahorita?”, “¿Quién te apoya más? ¿y con quién se complica?”, pregunta suave, sin meterte de golpe.',
+    'cierre_sesion': 'Tips “¿Cómo te vas hoy?”, “¿Qué te llevas de lo que hablamos?”, cierra con resumen cortito y siguiente paso.'
   };
 
   constructor(
