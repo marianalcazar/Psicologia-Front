@@ -20,7 +20,7 @@ export class TherapyApi {
   getPatientDataMock(): Observable<ResumenPaciente> {
     const mockPatient: ResumenPaciente = {
       nombre: 'John Smith',
-      imagen: '',
+      image: '',
       edad: '35 años',
 
     };

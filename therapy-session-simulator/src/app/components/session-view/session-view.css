@@ -5,40 +5,71 @@
   background: linear-gradient(135deg, #f5f8fa 0%, #e8f0f7 100%);
 }
 
-.session-header {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-  color: white;
-  padding: 32px 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+ 
+
+
+ .session-header {
+  background: rgb(239,242,243);
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.header-text {
-  flex: 1;
-}
-
-.session-header h1 {
-  margin: 0 0 8px 0;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-.subtitle {
+.header-text h1 {
   margin: 0;
-  font-size: 15px;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 400;
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
 }
 
+.header-info {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.session-number,
+.session-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.session-time {
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border-radius: 20px;
+}
+
+.session-time.warning {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.session-time mat-icon.warning {
+  color: #f57c00;
+}
+
+.session-time .separator {
+  margin: 0 8px;
+  color: #ccc;
+}
+
+mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
 .logout-btn {
   display: flex;
   align-items: center;

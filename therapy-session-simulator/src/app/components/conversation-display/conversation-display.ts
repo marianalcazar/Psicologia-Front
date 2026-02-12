@@ -57,8 +57,11 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
 
   @Input() messages: Message[] = [];
   @Output() sendMessage = new EventEmitter<string>();
+  @Output() tiempoActualizado = new EventEmitter<{transcurrido: number, restante: number}>(); // 👈 AGREGAR ESTO
+  
   @Input() numeroSesion: number = 1;
   @Input() paciente: any;
+  
   therapistMessage: string = '';
   isLoading: boolean = false;
   isSending: boolean = false;
@@ -75,9 +78,7 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
     private dialogoService: DialogoService,
     private snackBar: MatSnackBar,
     private auth: AuthService
-
   ) { }
-
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['paciente']?.currentValue) {
@@ -106,7 +107,6 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
     }
   }
 
-
   private iniciarTimer(): void {
     this.timerSubscription = interval(60000)
       .pipe(takeUntil(this.destroy$))
@@ -114,6 +114,12 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
         if (this.tiempoRestante > 0) {
           this.tiempoRestante--;
           this.tiempoTranscurrido++;
+
+          // 👈 EMITIR EL TIEMPO ACTUALIZADO AL COMPONENTE PADRE
+          this.tiempoActualizado.emit({
+            transcurrido: this.tiempoTranscurrido,
+            restante: this.tiempoRestante
+          });
 
           if (this.tiempoRestante === 10) {
             this.snackBar.open(
@@ -139,12 +145,10 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
             ).afterDismissed().subscribe(async () => {
               await this.auth.logout();
             });
-
           }
         }
       });
   }
-
 
   onSendMessage(): void {
     if (!this.therapistMessage.trim() || this.isSending) {
@@ -163,7 +167,6 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
     }, 4500);
   }
 
-
   private scrollToBottom(): void {
     try {
       if (this.messagesArea) {
@@ -174,5 +177,4 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
       console.error('Error al hacer scroll:', err);
     }
   }
-
 }

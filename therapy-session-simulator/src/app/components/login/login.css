@@ -209,3 +209,29 @@ input::placeholder {
 .forgot-link:hover {
   color: #3b82f6;
 }
+
+.btn-microsoft {
+width: 100%;
+height: 44px;
+border-radius: 10px;
+border: 1px solid #d1d5db;
+background: #ffffff;
+color: #1f2937;
+font-weight: 500;
+font-size: 14px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+cursor: pointer;
+transition: all .18s ease;
+}
+
+.btn-microsoft:hover {
+background: #f3f4f6;
+border-color: #9ca3af;
+}
+
+.btn-microsoft:active {
+transform: scale(0.98);
+}

@@ -59,7 +59,9 @@ export class DialogoService {
           {},
           { headers }
         )
-      ),
+      ),tap(response => {
+      console.log("📦 Response crudo del backend:", response);
+    }),
       map(resumenStr => JSON.parse(resumenStr) as ResumenPacienteExtendido),
       tap(() => {
       }),

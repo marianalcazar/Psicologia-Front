@@ -2,21 +2,7 @@
 
 <div class="conversation-container">
   <!-- Header con información de sesión -->
-  <div class="session-header" *ngIf="numeroSesion">
-    <div class="session-info">
-      <mat-icon>event</mat-icon>
-      <span>Sesión #{{ numeroSesion }}</span>
-    </div>
-
-    <div class="timer-info" *ngIf="tiempoRestante > 0">
-      <mat-icon [class.warning]="tiempoRestante <= 10">timer</mat-icon>
-      <span [class.warning]="tiempoRestante <= 10">
-        {{ tiempoRestante }} min restantes
-      </span>
-    </div>
-
-
-  </div>
+  
 
   <!-- Área de mensajes -->
   <div class="messages-area" #messagesArea>

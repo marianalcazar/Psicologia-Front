@@ -114,7 +114,12 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   getCompletedCount(): number {
     return this.checklistItems.filter(item => item.completed).length;
   }
-
+ getLineHeight(): string {
+    const itemCount = this.checklistItems.length;
+    const itemHeight = 80; // altura aproximada por item (ajusta según tu contenido)
+    const totalHeight = (itemCount - 1) * itemHeight;
+    return `${totalHeight}px`;
+  }
   getCompletionPercentage(): number {
     if (this.checklistItems.length === 0) return 0;
     return (this.getCompletedCount() / this.checklistItems.length) * 100;

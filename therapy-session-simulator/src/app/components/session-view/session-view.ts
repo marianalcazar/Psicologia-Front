@@ -10,7 +10,8 @@ import { ConversationDisplay, Message } from '../conversation-display/conversati
 import { TherapyApi } from '../../services/therapy-api';
 import { AuthService } from '../../services/auth';
 import { DialogoService } from '../../services/dialogo';
-
+import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-session-view',
   standalone: true,
@@ -18,17 +19,21 @@ import { DialogoService } from '../../services/dialogo';
     CommonModule,
     PatientProfile,
     ChecklistSidebar,
-    ConversationDisplay
-  ],
+    ConversationDisplay,
+    MatIcon
+],
   templateUrl: './session-view.html',
   styleUrls: ['./session-view.css']
 })
 export class SessionView implements OnInit, OnDestroy {
 
 
-  messages: Message[] = [];
-  pacienteActual: any = null;
-  checklistSesion: any = null;
+messages: Message[] = [];
+pacienteActual: any = null;
+checklistSesion: any = null;
+numeroSesion: number = 1;
+tiempoTranscurrido: number = 0;
+tiempoRestante: number = 60;
   checklistItems: ChecklistItem[] = [
     {
       id: 'rapport',
@@ -217,9 +222,18 @@ export class SessionView implements OnInit, OnDestroy {
     await this.auth.logout();
   }
 
-  onPacienteChange(paciente: any) {
-    this.pacienteActual = paciente;
+onTiempoActualizado(tiempo: {transcurrido: number, restante: number}): void {
+  this.tiempoTranscurrido = tiempo.transcurrido;
+  this.tiempoRestante = tiempo.restante;
+  console.log('Tiempo actualizado:', tiempo); // 👈 Para debug
+}
+
+onPacienteChange(paciente: any) {
+  this.pacienteActual = paciente;
+  if (paciente?.numeroSesion) {
+    this.numeroSesion = paciente.numeroSesion;
   }
+}
 
   aceptarTerminos(): void {
     localStorage.setItem('disclaimerAceptado', 'true');

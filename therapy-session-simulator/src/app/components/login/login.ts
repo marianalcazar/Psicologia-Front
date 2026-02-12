@@ -37,6 +37,14 @@ try{
 }
 
 }
+async loginWithMicrosoft(){
+  try{
+    await this.auth.loginWithMicrosoft();
+  }catch(error){
+    this.errorMessage="Error al iniciar sesión con Microsoft";
+    console.error(this.errorMessage);
+  }
+}
   async signUp(){
     
         this.router.navigate(['/signup']);

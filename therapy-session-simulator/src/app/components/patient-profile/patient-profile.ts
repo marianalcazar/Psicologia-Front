@@ -46,7 +46,7 @@ export class PatientProfile implements OnInit {
         this.patient = {
           nombre: resumen.nombre,
           edad: resumen.edad,
-          imagen: resumen.imagen,
+          image: resumen.image,
           numeroSesion: resumen.numeroSesion
         };
 
