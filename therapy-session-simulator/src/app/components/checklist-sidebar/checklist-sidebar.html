@@ -2,25 +2,31 @@
   <div class="checklist-header">
     <h3>Checklist de la sesión</h3>
   </div>
-  
+
   <div class="checklist-items">
     <!-- NUEVO: Wrapper interno para la línea -->
     <div class="checklist-items-wrapper">
-      <div class="checklist-item" 
-           *ngFor="let item of checklistItems; let i = index" 
-           [class.completed]="item.completed">
+      <div class="checklist-item" *ngFor="let item of checklistItems; let i = index" [class.completed]="item.completed">
         <div class="item-indicator">
           <div class="item-number" *ngIf="!item.completed">{{ i + 1 }}</div>
           <mat-icon class="item-check" *ngIf="item.completed">check_circle</mat-icon>
         </div>
         <div class="item-content">
-          <h4>{{ item.title }}</h4>
+          <h4>{{ item.title }}
+            <mat-icon class="info-eye" matTooltip="{{ item.tips }}" matTooltipPosition="right"
+              matTooltipClass="white-tooltip">
+              visibility
+            </mat-icon>
+            <span class="eye-text-tooltip">
+              Tips
+            </span>
+          </h4>
           <p>{{ item.description }}</p>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="checklist-progress">
     <div class="progress-bar">
       <div class="progress-fill" [style.width.%]="getCompletionPercentage()"></div>

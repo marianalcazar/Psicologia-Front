@@ -143,9 +143,9 @@
     justify-content: flex-end;
 
     .message-bubble {
-      background: #1976d2;
-      color: white;
-      border-bottom-right-radius: 4px;
+      background: #E3F2FD;
+      color: #1E3A5F;
+      border-left: 4px solid #E3F2FD;
     }
   }
 
@@ -153,9 +153,9 @@
     justify-content: flex-start;
 
     .message-bubble {
-      background: white;
-      color: #333;
-      border-bottom-left-radius: 4px;
+      background: #F1F3F4;
+      color: #2E2E2E;
+      border-left: #F1F3F4;
     }
   }
 }

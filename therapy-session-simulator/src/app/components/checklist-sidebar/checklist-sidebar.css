@@ -1,23 +1,17 @@
-/* ========================================
-   CONTENEDOR PRINCIPAL
-======================================== */
 .checklist-container {
   background: rgba(243, 243, 249, 0);
   border-radius: 16px;
   padding: 24px;
   max-width: 400px;
   margin: 0 auto;
-  height: 545px; /* Altura fija para mantener el scroll */
+  height: 545px;
   display: flex;
   flex-direction: column;
 }
 
-/* ========================================
-   HEADER
-======================================== */
 .checklist-header {
   margin-bottom: 24px;
-  flex-shrink: 0; /* Evita que se comprima */
+  flex-shrink: 0;
 }
 
 .checklist-header h3 {
@@ -32,9 +26,6 @@
   display: none;
 }
 
-/* ========================================
-   ITEMS CON LÍNEA VERTICAL Y SCROLL
-======================================== */
 .checklist-items {
   position: relative;
   flex: 1;
@@ -44,7 +35,6 @@
   margin-bottom: 24px;
 }
 
-/* Scrollbar personalizada */
 .checklist-items::-webkit-scrollbar {
   width: 6px;
 }
@@ -62,19 +52,17 @@
   background: #b0b0b0;
 }
 
-/* NUEVO: Wrapper interno para la línea */
 .checklist-items-wrapper {
   position: relative;
   min-height: 100%;
 }
 
-/* Línea vertical conectora - AHORA EN EL WRAPPER */
 .checklist-items-wrapper::before {
   content: '';
   position: absolute;
   left: 15px;
   top: 16px;
-  bottom: 48px; /* Se extiende hasta el final del contenido */
+  bottom: 48px;
   width: 2px;
   background: #e0e0e0;
   z-index: 0;
@@ -94,9 +82,7 @@
 .checklist-item:last-child {
   padding-bottom: 16px;
 }
-/* ========================================
-   INDICADORES CIRCULARES
-======================================== */
+
 .item-indicator {
   flex-shrink: 0;
   width: 32px;
@@ -108,15 +94,13 @@
   z-index: 1;
 }
 
-/* Círculo azul con checkmark */
 .item-check {
-  color: #2196f3;
+  color: #47b07a;
   font-size: 32px;
   width: 32px;
   height: 32px;
 }
 
-/* Círculo vacío (pendiente) */
 .item-number {
   width: 32px;
   height: 32px;
@@ -131,9 +115,6 @@
   font-size: 16px;
 }
 
-/* ========================================
-   CONTENIDO DEL ITEM
-======================================== */
 .item-content {
   flex: 1;
   padding-top: 4px;
@@ -154,13 +135,10 @@
   line-height: 1.5;
 }
 
-/* ========================================
-   PROGRESO
-======================================== */
 .checklist-progress {
   padding-top: 0;
   border-top: none;
-  flex-shrink: 0; /* Evita que se comprima */
+  flex-shrink: 0;
 }
 
 .progress-bar {
@@ -174,7 +152,7 @@
 
 .progress-fill {
   height: 100%;
-  background: #2196f3;
+  background: #47b07a;
   transition: width 0.5s ease;
   border-radius: 4px;
 }
@@ -187,25 +165,42 @@
   color: #666666;
 }
 
-/* ========================================
-   RESPONSIVE
-======================================== */
 @media (max-width: 480px) {
   .checklist-container {
     padding: 20px;
     border-radius: 12px;
-    height: 500px; /* Altura ajustada para móviles */
+    height: 500px;
   }
-  
+
   .checklist-header h3 {
     font-size: 18px;
   }
-  
+
   .item-content h4 {
     font-size: 15px;
   }
-  
+
   .item-content p {
     font-size: 13px;
   }
+}
+
+.info-eye {
+  font-size: 18px;
+  margin-left: 8px;
+  cursor: pointer;
+  color: #afdbc9;
+  vertical-align: middle;
+}
+
+.info-eye:hover {
+  color: #000;
+}
+
+.eye-text-tooltip {
+  font-size: 12px;
+  color: #636363;
+  position: relative;
+  top: -3px;
+
 }
