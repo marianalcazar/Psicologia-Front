@@ -5,6 +5,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, takeUntil } from 'rxjs';
 import { DialogoService } from '../../services/dialogo';
 import { checklistTerapeutico } from '../../interfaces/checklistTerapeutico.interface';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 
 export interface ChecklistItem {
@@ -12,11 +14,12 @@ export interface ChecklistItem {
   title: string;
   description: string;
   completed: boolean;
+  tips?: string;
 }
 
 @Component({
   selector: 'app-checklist-sidebar',
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, MatTooltipModule],
   templateUrl: './checklist-sidebar.html',
   styleUrl: './checklist-sidebar.css'
 })
@@ -36,12 +39,24 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   };
 
   private checklistDescriptions: { [key: string]: string } = {
-    'rapport': 'Tips: “Gracias por venir. ¿Cómo te sientes hoy?”,“¿Qué te gustaría platicar hoy?” “Vamos con calma, a tu ritmo.”',
-    'pregunta_refleja': 'Tips: “A ver si entendí… ¿te pasó ___?”, “Entonces te sentiste ___, ¿sí?” repite con tus palabras y confirma.',
-    'validacion': 'Tips: “Es normal que te sientas así.”, “Con lo que viviste, sí está pesado.”, acompaña, no minimices.',
-    'objetivo_terapeutico': 'Tips: “¿Qué te gustaría que cambiara con la terapia?”, “Si esto mejora, ¿qué sería diferente en tu día a día?”, objetivo simple y aterrizado.',
-    'genograma': 'Tips:  “¿Con quién vives ahorita?”, “¿Quién te apoya más? ¿y con quién se complica?”, pregunta suave, sin meterte de golpe.',
-    'cierre_sesion': 'Tips “¿Cómo te vas hoy?”, “¿Qué te llevas de lo que hablamos?”, cierra con resumen cortito y siguiente paso.'
+    'rapport': 'Tips:\nGracias por estar aquí hoy.\n¿Qué te gustaría que este espacio te ofreciera?\nPodemos ir paso a paso, sin prisa.\nMe interesa conocer tu historia desde tu mirada.',
+    'pregunta_refleja': 'Tips:\nA ver si te sigo… ¿esto ha estado presente desde hace tiempo?\nEntonces, cuando pasa ___, tú sueles sentirte ___, ¿cierto?\nSi le pusieras un nombre a esto, ¿cómo lo llamarías?\n *Refleja para que la persona se escuche a sí misma.',
+    'validacion': 'Tips:\nTiene mucho sentido que te sientas así con lo que has vivido.\nNo estás exagerando, esto realmente importa.\nHas estado haciendo lo mejor posible con las herramientas que tenías.\n *Reconoce la experiencia sin minimizar.',
+    'objetivo_terapeutico': 'Tips:\nSi esta conversación fuera útil, ¿qué tendría que pasar hoy?\nImagina que mañana amanece un poco mejor… ¿qué notarías diferente?\n¿Qué sería una señal pequeña de avance esta semana?\n *Objetivos concretos y alcanzables.',
+    'genograma': 'Tips:\nPara entender tu contexto, ¿quiénes han sido importantes en tu vida?\n¿De quién has recibido apoyo en momentos difíciles?\n¿Hay historias familiares que influyan en cómo ves este problema?\n *Explora vínculos y significados, con cuidado.',
+    'cierre_sesion': 'Tips:\nAntes de cerrar, ¿qué te llevas de lo que hablamos hoy?\n¿Qué parte de tu historia te gustaría seguir explorando la próxima vez?\n¿Cuál sería un paso pequeño que valga la pena intentar esta semana?\n *Cierre con resumen y dirección.'
+  };
+
+
+
+
+  private checklistFullDescriptions: { [key: string]: string } = {
+    'rapport': 'Establecimiento de la conexión inicial con el paciente, creando un ambiente de confianza y comodidad para facilitar la comunicación terapéutica.',
+    'pregunta_refleja': 'Técnica que devuelve al paciente sus propias palabras o emociones expresadas, ayudándole a profundizar en su autoconocimiento y reflexión.',
+    'validacion': 'Reconocimiento y legitimación de las emociones y experiencias del paciente, transmitiendo que sus sentimientos son comprensibles y aceptables.',
+    'objetivo_terapeutico': 'Identificación y definición clara de las metas específicas que el paciente desea alcanzar durante el proceso terapéutico.',
+    'genograma': 'Herramienta gráfica que permite representar la estructura familiar y las relaciones entre sus miembros a lo largo de varias generaciones.',
+    'cierre_sesion': 'Conclusión de la sesión terapéutica, preguntando al paciente sobre su experiencia y cómo se sintió durante la sesión.'
   };
 
   constructor(
@@ -71,39 +86,45 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
       {
         id: 'rapport',
         title: this.checklistLabels['rapport'],
-        description: this.checklistDescriptions['rapport'],
-        completed: false
+        description: this.checklistFullDescriptions['rapport'],
+        completed: false,
+        tips: this.checklistDescriptions['rapport']
       },
       {
         id: 'pregunta_refleja',
         title: this.checklistLabels['pregunta_refleja'],
-        description: this.checklistDescriptions['pregunta_refleja'],
-        completed: false
+        description: this.checklistFullDescriptions['pregunta_refleja'],
+        completed: false,
+        tips: this.checklistDescriptions['pregunta_refleja']
       },
       {
         id: 'validacion',
         title: this.checklistLabels['validacion'],
-        description: this.checklistDescriptions['validacion'],
-        completed: false
+        description: this.checklistFullDescriptions['validacion'],
+        completed: false,
+        tips: this.checklistDescriptions['validacion']
       },
       {
         id: 'genograma',
         title: this.checklistLabels['genograma'],
-        description: this.checklistDescriptions['genograma'],
-        completed: false
+        description: this.checklistFullDescriptions['genograma'],
+        completed: false,
+        tips: this.checklistDescriptions['genograma']
 
       },
       {
         id: 'objetivo_terapeutico',
         title: this.checklistLabels['objetivo_terapeutico'],
-        description: this.checklistDescriptions['objetivo_terapeutico'],
-        completed: false
+        description: this.checklistFullDescriptions['objetivo_terapeutico'],
+        completed: false,
+        tips: this.checklistDescriptions['objetivo_terapeutico']
       },
       {
         id: 'cierre_sesion',
         title: this.checklistLabels['cierre_sesion'],
-        description: this.checklistDescriptions['cierre_sesion'],
-        completed: false
+        description: this.checklistFullDescriptions['cierre_sesion'],
+        completed: false,
+        tips: this.checklistDescriptions['cierre_sesion']
       }
 
     ];
@@ -114,7 +135,7 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
   getCompletedCount(): number {
     return this.checklistItems.filter(item => item.completed).length;
   }
- getLineHeight(): string {
+  getLineHeight(): string {
     const itemCount = this.checklistItems.length;
     const itemHeight = 80; // altura aproximada por item (ajusta según tu contenido)
     const totalHeight = (itemCount - 1) * itemHeight;

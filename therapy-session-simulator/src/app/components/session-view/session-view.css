@@ -5,14 +5,14 @@
   background: linear-gradient(135deg, #f5f8fa 0%, #e8f0f7 100%);
 }
 
- 
 
 
- .session-header {
-  background: rgb(239,242,243);
+
+.session-header {
+  background: rgb(239, 242, 243);
   border-bottom: 1px solid #e0e0e0;
   padding: 16px 24px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .header-content {
@@ -25,9 +25,10 @@
 
 .header-text h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 500;
   color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .header-info {
@@ -70,6 +71,7 @@ mat-icon {
   width: 20px;
   height: 20px;
 }
+
 .logout-btn {
   display: flex;
   align-items: center;
