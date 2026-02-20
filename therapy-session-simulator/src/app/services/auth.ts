@@ -1,6 +1,6 @@
 import { Injectable, signal, computed } from "@angular/core";
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword, signOut, User, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword,OAuthProvider } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signOut, User, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, OAuthProvider } from "firebase/auth";
 import { environment } from "../../../enviroment";
 import { Router } from "@angular/router";
 import { RegisterUserPayload } from "../interfaces/registrar-user.model";
@@ -24,21 +24,37 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
+
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+
+      const payload: RegisterUserPayload = {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email ?? '',
+        name: userCredential.user.displayName ?? 'Usuario Microsoft',
+        photoUrl: userCredential.user.photoURL ?? '',
+        provider: 'microsoft'
+      };
+
+      await this.registerUser(payload);
+
       this.user.set(userCredential.user);
       this.router.navigate(['/dashboard']);
+
     } catch (error) {
-      console.error(error);
+      alert('Error al iniciar sesión, usuario no registrado o contraseña incorrecta.');
       throw new Error("Error al iniciar sesión");
     }
   }
+
+
   async register(email: string, password: string) {
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
     console.log("Usuario registrado:", userCredential.user);
     this.user.set(userCredential.user);
     this.router.navigate(['/dashboard']);
   }
+
   async loginWithGoogle() {
     try {
       const provider = new GoogleAuthProvider();
@@ -64,39 +80,39 @@ export class AuthService {
   }
 
   async loginWithMicrosoft() {
-  try {
+    try {
 
-    const provider = new OAuthProvider('microsoft.com');
+      const provider = new OAuthProvider('microsoft.com');
 
-    // Recomendado (evita que se auto-loguee con una sesión previa)
-    provider.setCustomParameters({
-      prompt: 'select_account'
-    });
+      // Recomendado (evita que se auto-loguee con una sesión previa)
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
 
-    const result = await signInWithPopup(this.auth, provider);
-    const user = result.user;
+      const result = await signInWithPopup(this.auth, provider);
+      const user = result.user;
 
-    // ⚠️ Microsoft puede regresar null en estos campos
-    const payload: RegisterUserPayload = {
-      uid: user.uid,
-      email: user.email ?? '',
-      name: user.displayName ?? 'Usuario Microsoft',
-      photoUrl: user.photoURL ?? '',
-      provider: 'microsoft'
-    };
+      // ⚠️ Microsoft puede regresar null en estos campos
+      const payload: RegisterUserPayload = {
+        uid: user.uid,
+        email: user.email ?? '',
+        name: user.displayName ?? 'Usuario Microsoft',
+        photoUrl: user.photoURL ?? '',
+        provider: 'microsoft'
+      };
 
-    await this.registerUser(payload);
+      await this.registerUser(payload);
 
-    // (tenías duplicado esto en Google)
-    this.user.set(user);
+      // (tenías duplicado esto en Google)
+      this.user.set(user);
 
-    this.router.navigate(['/dashboard']);
+      this.router.navigate(['/dashboard']);
 
-  } catch (error: any) {
-    console.error('Microsoft Login Error:', error);
-    throw new Error("Error al iniciar sesión con Microsoft");
+    } catch (error: any) {
+      console.error('Microsoft Login Error:', error);
+      throw new Error("Error al iniciar sesión con Microsoft");
+    }
   }
-}
 
   async logout() {
     try {
@@ -129,7 +145,6 @@ export class AuthService {
       throw new Error('Error al registrar el usuario');
     }
   }
-
 
 
 }
