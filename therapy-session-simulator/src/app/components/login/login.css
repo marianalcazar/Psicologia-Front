@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: center;
   background: #f8f9fa;
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
   padding: 20px;
@@ -23,7 +23,7 @@
   background: white;
   padding: 48px 40px;
   border-radius: 12px;
-  box-shadow: 
+  box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.05),
     0 10px 40px rgba(0, 0, 0, 0.08);
 }
@@ -211,27 +211,64 @@ input::placeholder {
 }
 
 .btn-microsoft {
-width: 100%;
-height: 44px;
-border-radius: 10px;
-border: 1px solid #d1d5db;
-background: #ffffff;
-color: #1f2937;
-font-weight: 500;
-font-size: 14px;
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 10px;
-cursor: pointer;
-transition: all .18s ease;
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #1f2937;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all .18s ease;
 }
 
 .btn-microsoft:hover {
-background: #f3f4f6;
-border-color: #9ca3af;
+  background: #f3f4f6;
+  border-color: #9ca3af;
 }
 
 .btn-microsoft:active {
-transform: scale(0.98);
+  transform: scale(0.98);
+}
+
+.usuario-prueba {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.usuario-prueba input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 250px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.usuario-prueba input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.usuario-prueba button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #c98d0d;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.usuario-prueba button:hover {
+  background-color: #663d00;
+
 }
