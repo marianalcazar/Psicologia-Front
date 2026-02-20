@@ -44,6 +44,7 @@ export class AuthService {
     } catch (error) {
       alert('Error al iniciar sesión, usuario no registrado o contraseña incorrecta.');
       throw new Error("Error al iniciar sesión");
+
     }
   }
 
