@@ -21,19 +21,19 @@ import { MatIconModule } from '@angular/material/icon';
     ChecklistSidebar,
     ConversationDisplay,
     MatIcon
-],
+  ],
   templateUrl: './session-view.html',
   styleUrls: ['./session-view.css']
 })
 export class SessionView implements OnInit, OnDestroy {
 
 
-messages: Message[] = [];
-pacienteActual: any = null;
-checklistSesion: any = null;
-numeroSesion: number = 1;
-tiempoTranscurrido: number = 0;
-tiempoRestante: number = 60;
+  messages: Message[] = [];
+  pacienteActual: any = null;
+  checklistSesion: any = null;
+  numeroSesion: number = 1;
+  tiempoTranscurrido: number = 0;
+  tiempoRestante: number = 60;
   checklistItems: ChecklistItem[] = [
     {
       id: 'rapport',
@@ -92,7 +92,6 @@ tiempoRestante: number = 60;
 
     try {
       const token = await this.auth.getToken();
-      console.log("Token en session view: " + token);
 
       this.therapyApi.getPatientDataMock().subscribe({
         next: (patient) => {
@@ -145,7 +144,6 @@ tiempoRestante: number = 60;
       .subscribe({
 
         next: (response) => {
-          console.log('Respuesta completa del backend:', response);
           this.checklistSesion = response.checklist_evaluado
 
           const pacienteMensaje: Message = {
@@ -196,7 +194,6 @@ tiempoRestante: number = 60;
       'objetivo_terapeutico': 'objetivo_terapeutico'
     };
 
-    console.log('Actualizando checklist con:', checklistData);
 
     Object.keys(checklistData).forEach(key => {
       const itemId = mapeoChecklist[key];
@@ -222,18 +219,18 @@ tiempoRestante: number = 60;
     await this.auth.logout();
   }
 
-onTiempoActualizado(tiempo: {transcurrido: number, restante: number}): void {
-  this.tiempoTranscurrido = tiempo.transcurrido;
-  this.tiempoRestante = tiempo.restante;
-  console.log('Tiempo actualizado:', tiempo); // 👈 Para debug
-}
-
-onPacienteChange(paciente: any) {
-  this.pacienteActual = paciente;
-  if (paciente?.numeroSesion) {
-    this.numeroSesion = paciente.numeroSesion;
+  onTiempoActualizado(tiempo: { transcurrido: number, restante: number }): void {
+    this.tiempoTranscurrido = tiempo.transcurrido;
+    this.tiempoRestante = tiempo.restante;
+    console.log('Tiempo actualizado:', tiempo); // 👈 Para debug
   }
-}
+
+  onPacienteChange(paciente: any) {
+    this.pacienteActual = paciente;
+    if (paciente?.numeroSesion) {
+      this.numeroSesion = paciente.numeroSesion;
+    }
+  }
 
   aceptarTerminos(): void {
     localStorage.setItem('disclaimerAceptado', 'true');

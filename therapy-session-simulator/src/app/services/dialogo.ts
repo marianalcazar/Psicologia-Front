@@ -59,9 +59,8 @@ export class DialogoService {
           {},
           { headers }
         )
-      ),tap(response => {
-      console.log("📦 Response crudo del backend:", response);
-    }),
+      ), tap(response => {
+      }),
       map(resumenStr => JSON.parse(resumenStr) as ResumenPacienteExtendido),
       tap(() => {
       }),
@@ -108,7 +107,6 @@ export class DialogoService {
         )
       ),
       tap(response => {
-        console.log('💬 Respuesta recibida:', response);
 
       }),
       catchError(error => {
