@@ -57,11 +57,11 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
 
   @Input() messages: Message[] = [];
   @Output() sendMessage = new EventEmitter<string>();
-  @Output() tiempoActualizado = new EventEmitter<{transcurrido: number, restante: number}>(); // 👈 AGREGAR ESTO
-  
+  @Output() tiempoActualizado = new EventEmitter<{ transcurrido: number, restante: number }>();
+
   @Input() numeroSesion: number = 1;
   @Input() paciente: any;
-  
+
   therapistMessage: string = '';
   isLoading: boolean = false;
   isSending: boolean = false;
@@ -115,7 +115,6 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
           this.tiempoRestante--;
           this.tiempoTranscurrido++;
 
-          // 👈 EMITIR EL TIEMPO ACTUALIZADO AL COMPONENTE PADRE
           this.tiempoActualizado.emit({
             transcurrido: this.tiempoTranscurrido,
             restante: this.tiempoRestante
@@ -143,6 +142,7 @@ export class ConversationDisplay implements OnInit, AfterViewChecked, OnDestroy,
               'OK',
               { duration: 7000 }
             ).afterDismissed().subscribe(async () => {
+
               await this.auth.logout();
             });
           }

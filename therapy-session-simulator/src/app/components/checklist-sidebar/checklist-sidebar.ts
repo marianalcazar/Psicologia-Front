@@ -55,7 +55,7 @@ export class ChecklistSidebar implements OnInit, OnDestroy {
     'pregunta_refleja': 'Técnica que devuelve al paciente sus propias palabras o emociones expresadas, ayudándole a profundizar en su autoconocimiento y reflexión.',
     'validacion': 'Reconocimiento y legitimación de las emociones y experiencias del paciente, transmitiendo que sus sentimientos son comprensibles y aceptables.',
     'objetivo_terapeutico': 'Identificación y definición clara de las metas específicas que el paciente desea alcanzar durante el proceso terapéutico.',
-    'genograma': 'Herramienta gráfica que permite representar la estructura familiar y las relaciones entre sus miembros a lo largo de varias generaciones.',
+    'genograma': 'Permite representar la estructura familiar y las relaciones entre sus miembros a lo largo de varias generaciones.',
     'cierre_sesion': 'Conclusión de la sesión terapéutica, preguntando al paciente sobre su experiencia y cómo se sintió durante la sesión.'
   };
 
