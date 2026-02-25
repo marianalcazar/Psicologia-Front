@@ -159,6 +159,11 @@ export class SessionView implements OnInit, OnDestroy {
             this.actualizarChecklist(response.checklist_evaluado);
           }
 
+          if (response.cierre) {
+            setTimeout(() => {
+              this.logout();
+            }, 4000);
+          }
           if (response.sesionCompletada) {
             this.snackBar.open(
               '🎉 ¡Felicidades! Checklist completado',
@@ -222,7 +227,6 @@ export class SessionView implements OnInit, OnDestroy {
   onTiempoActualizado(tiempo: { transcurrido: number, restante: number }): void {
     this.tiempoTranscurrido = tiempo.transcurrido;
     this.tiempoRestante = tiempo.restante;
-    console.log('Tiempo actualizado:', tiempo); // 👈 Para debug
   }
 
   onPacienteChange(paciente: any) {
